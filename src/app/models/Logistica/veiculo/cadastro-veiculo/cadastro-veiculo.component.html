@@ -1,0 +1,78 @@
+<p-toast></p-toast>
+<form [formGroup]="veiculoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro de Veiculo</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="descricao">Modelo</label>
+                        <input type="text" formControlName="modelo" pInputText placeholder="modelo">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="placa">Placa</label>
+                        <p-inputMask formControlName="placa" mask="aaa-9999" characterPattern="[A-ZA-Z]"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="descricao">Ano Modelo</label>
+                        <p-inputMask formControlName="anoModelo" mask="9999" characterPattern="[A-ZA-Z]"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="placa">Chassi</label>
+                        <input type="text" formControlName="chassi" pInputText placeholder="Chassi">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3" formGroupName="categoria">
+                        <label for="categoria">Categoria</label>
+                        <p-dropdown formControlName="idCategoria" emptyFilterMessage="Busca não encontrada" placeholder="Selecione a categoria" [options]="categorias" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3" >
+                        <label for="combustivel">Renavam</label>
+                        <input formControlName="renavam" type="text" pInputText placeholder="Renavam">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="dataCompra">Data da Compra</label>
+                        <p-calendar formControlName="dataCompra" [locale]="ptBr" dateFormat="dd/mm/yy" dataType="string"></p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3" formGroupName="fabricante">
+                        <label for="fabricante">Fabricante</label>
+                        <p-dropdown formControlName="idFabricante" emptyFilterMessage="Busca não encontrada" placeholder="Selecione o fabricante" [options]="fabricantes" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="hodometro">Hodômetro</label>
+                        <input formControlName="hodometro" type="text" pInputText placeholder="Km Atual">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="pesoSuportado">Peso suportado</label>
+                        <input formControlName="pesoSuportado" type="text" pInputText placeholder="peso">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="depreciacao">Quantidade Eixo</label>
+                        <input formControlName="numTotalDeEixos" type="text" pInputText placeholder="Eixo">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <button [disabled]="!veiculoForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                        style="margin-bottom:10px;width:auto" label="Salvar" class="ui-button-rounded"></button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,51 @@
+<form [formGroup]="formPedidoSeparacao">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Listo de Pedido <button pTooltip="Atualize a lista" tooltipPosition="left" pButton type="button" icon="fas fa-sync-alt" class="ui-button-success btn"></button> </h1>
+
+                <p-table #dt1 [paginator]="true" [rows]="50" [lazy]="true"
+                [scrollable]="true" [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="380px"
+                [value]="formPedidoSeparacao.get('pedidoSeparacao').controls">
+                <ng-template pTemplate="colgroup">
+                    <colgroup>
+                        <col style="width:8em">
+                        <col style="width:12em">
+                        <col style="width:12em">
+                        <col style="width:5em">
+                        <col style="width:5em">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Setor</th>
+                            <th>CheckOut</th>
+                            <th>Concluido</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <td>{{rowData.value.pedido.createdDate}}</td>
+                            <td>{{rowData.value.pedido.entradaPedido.cliente}}</td>
+                            <td>{{rowData.value.pedido.localizacaoPedido}}</td>
+                            <td style="text-align: center">
+                                <button disabled="true" *ngIf="rowData.value.pedido.pedidoSeparacao.separado === false" pButton type="button" icon="fa fa-check-empty"
+                                    class="ui-button-secondary"></button>
+                                <button disabled="true" *ngIf="rowData.value.pedido.pedidoSeparacao.separado == true" pButton type="button" icon="fa fa-check"
+                                    class="ui-button-secondary"></button>
+                            </td>
+                            <td style="text-align: center">
+                                <button pTooltip="Salvar" pButton type="button" icon="fa fa-save"
+                                    class="ui-button-primary" (click)="salvarPedidoSeparacao(rowData.value)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+            </div>
+        </div>
+    </div>
+</form>

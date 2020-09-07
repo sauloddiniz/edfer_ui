@@ -1,0 +1,73 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<form [formGroup]="abastecimentoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro de Abastecimento</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4">
+                        <label for="dataAbastecimento">Data</label>
+                        <p-calendar formControlName="dataAbastecimento" [locale]="ptBr" [showTime]="true" dateFormat="dd/mm/yy" dataType="string"></p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4" formGroupName="veiculo">
+                        <label for="veiculo">Veículo</label>
+                        <p-dropdown formControlName="idVeiculo" id="veiculo" placeholder="Selecione o veiculo" [options]="veiculos" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4" formGroupName="posto">
+                        <label for="posto">Posto</label>
+                        <p-dropdown formControlName="idPosto" placeholder="Selecione o posto" id="posto" [options]="postos" [style]="{'width':'100%'}" filter="true" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4">
+                        <label for="tipoCombustivel">Tipo Combustivel</label>
+                        <p-dropdown formControlName="tipoCombustivel" placeholder="Selecione o o tipo" [options]="tipoCombustivel" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4">
+                        <label for="hodometro">Hodômetro</label>
+                        <input formControlName="hodometro" type="text" pInputText placeholder="Km" pKeyFilter="pnum">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4">
+                        <label for="valor">Quantidade Litro</label>
+                        <input #inputQuantLitro formControlName="quantidadeLitro" type="text" pInputText placeholder="valor" pKeyFilter="pnum">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4">
+                        <label for="valor">Total</label>
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon">R$</span>
+                            <input #valorTotal type="text" currencyMask formControlName="valorTotal" pInputText
+                            currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left', allowNegative: 'false'}">
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-4">
+                        <label for="valor">Valor Litro</label>
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon">R$</span>
+                            <input type="text" pInputText placeholder="valor litro"  formControlName="valorLitro"
+                            [value]="( ((valorTotal.value).substring('3').replace(',', '.')) / (inputQuantLitro.value).replace(',', '.')).toFixed('9')"
+                            currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left', allowNegative: 'false'}" >
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <label> </label>
+                        <button [disabled]="!abastecimentoForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                            label="Salvar" class="ui-button-raised ui-button-rounded" style="margin-bottom:10px;width:auto">
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>

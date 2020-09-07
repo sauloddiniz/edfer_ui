@@ -1,0 +1,96 @@
+<p-toast></p-toast>
+<form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro Usuario</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class=" ui-g-12 ui-md-6 ui-lg-4">
+                        <label>Usuario</label>
+                        <input pInputText type="text" formControlName="usuario">
+                    </div>
+
+                    <div class=" ui-g-12 ui-md-6 ui-lg-4">
+                        <label>Nome Completo</label>
+                        <input pInputText type="text" formControlName="nome">
+                    </div>
+
+                    <div class=" ui-g-12 ui-md-6 ui-lg-4">
+                        <label>E-mail</label>
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon">@</span>
+                            <input type="email" pInputText placeholder="E-mail" formControlName="email">
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-10" formArrayName="perfil">
+                        <label>Tipo Usuario</label>
+                        <div class="ui-g">
+                            <div class="ui-g-6 ui-md-3">
+                                <p-checkbox #checkAdministrador name="perfil" binary="true" inputId="0" (onChange)="changeCheck(checkAdministrador)" [value]="0" label="Administrador">
+                                </p-checkbox>
+                            </div>
+                            <div class="ui-g-6 ui-md-3">
+                                <p-checkbox #checkGestor name="perfil" binary="true" inputId="4" (onChange)="changeCheck(checkGestor)" [value]="4" label="Gestor">
+                                </p-checkbox>
+                            </div>
+                            <div class="ui-g-6 ui-md-3">
+                                <p-checkbox #checkVenda name="perfil" binary="true" inputId="1" (onChange)="changeCheck(checkVenda)" [value]="1" label="Venda">
+                                </p-checkbox>
+                            </div>
+                            <div class="ui-g-6 ui-md-3">
+                                <p-checkbox #checkLogistica name="perfil" binary="true" inputId="2" (onChange)="changeCheck(checkLogistica)" [value]="2" label="Logistica">
+                                </p-checkbox>
+                            </div>
+                            <div class="ui-g-6 ui-md-3">
+                                <p-checkbox #checkCompra name="perfil" binary="true" inputId="3" (onChange)="changeCheck(checkCompra)" [value]="3" label="Compra">
+                                </p-checkbox>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                        <label>Ativo</label>
+                        <div class="ui-g">
+                            <p-inputSwitch onLabel="Sim" offLabel="Não" formControlName="ativo">
+                            </p-inputSwitch>
+                        </div>
+                    </div>
+
+                    <div class=" ui-g-12 ui-md-6 ui-lg-6">
+                        <label>Senha</label>
+                        <span class="ui-messages-error ui-corner-all" *ngIf="!usuarioForm.get('senha').valid && usuarioForm.get('senha').touched">"Senha
+                            obrigatoria"
+                        </span>
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon"><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <input pPassword type="password" promptLabel="Insira a senha" weakLabel="Fraco" mediumLabel="Media"
+                                strongLabel="Forte" formControlName="senha" />
+                        </div>
+                    </div>
+
+                    <div class=" ui-g-12 ui-md-6 ui-lg-6">
+                        <label>Confirmação de Senha</label>
+                        <span class="ui-messages-error ui-corner-all" *ngIf="!confSenha">"Senha diferente"</span>
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon"><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <input pPassword #confSenha type="password" promptLabel="Repita a senha" weakLabel="Fraco"
+                                mediumLabel="Media" strongLabel="Forte" />
+                        </div>
+                    </div>
+
+                    <div class=" ui-g-12 ui-md-12 ui-lg-12">
+                        <button [disabled]="!usuarioForm.valid" style="margin-bottom:10px;width:auto" pButton type="submit" label="Salvar">
+                        </button>
+                    </div>
+                </div>
+                <!--FIM FORM-GROUP-->
+            </div>
+            <!--FIM-CARD-->
+        </div>
+    </div>
+</form>

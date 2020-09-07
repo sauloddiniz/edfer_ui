@@ -1,0 +1,21 @@
+.chips {
+    width: 60px;
+    height: 32px;
+    margin: 0;
+    color: #ffffff;
+    background-color: #007ad9;
+    border: 1px solid #007ad9;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.btn {
+    float: right;
+    margin-right: 1.5em;
+    margin-top: -0.50em;
+}
+
+.rowDate-color {
+    background-color: rgb(243, 131, 131) !important;
+    color: #ffffff !important;
+}

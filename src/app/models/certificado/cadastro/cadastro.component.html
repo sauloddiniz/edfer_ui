@@ -1,0 +1,434 @@
+<p-toast></p-toast>
+
+<form *ngIf="shared.simplePermicion('ADMINISTRADOR')"  [formGroup]="certificadoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Certificados</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="fornecedor">Fornecedor</label>
+                        <p-autoComplete
+                            formControlName="fornecedor"
+                            appendTo="body"
+                            [suggestions]="listFornecedor"
+                            (completeMethod)="addListFornecedor($event)"
+                        ></p-autoComplete>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="dataEmissao">Data Emissão
+                        </label>
+                        <p-inputMask mask="99/99/9999" formControlName="dataEmissao"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="numero">Numero Certificado
+                            <span *ngIf="certificadoForm.controls['numero'].hasError('field')"
+                            style="color: red;"
+                            [innerText]="certificadoForm.controls['numero'].errors.message"></span>
+                        </label>
+                        <input formControlName="numero" pKeyFilter="pnum"  pInputText placeholder="Numero certificado">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Numero Nota Fiscal</label>
+                        <input formControlName="numeroNotaFiscal" pKeyFilter="pnum" pInputText placeholder="Numero NFE">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="norma">Norma / Qualidade</label>
+                        <p-autoComplete
+                            formControlName="norma"
+                            appendTo="body"
+                            [suggestions]="listNorma"
+                            (completeMethod)="addListNorma($event)"
+                        ></p-autoComplete>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="norma">Dimensões</label>
+                        <input
+                            formControlName="dimensao"
+                            pInputText placeholder="Dimensões">
+                    </div>
+
+                    <div class="ui-g-1 ui-md-1 ui-lg-1">
+                        <label for="pdf">Pdf</label>
+                        <p-toggleButton formControlName="pdf" [style]="{'width':'100px'}" onLabel="Sim" offLabel="Não"></p-toggleButton>
+                    </div>
+
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                            <p-table #table [value]="certificadoForm.get('produtoCertificadoAux').controls" [scrollable]="true"
+                                [style]="{width:'100%'}">
+                                <ng-template pTemplate="colgroup">
+                                    <colgroup>
+                                        <col style="width: 10%">
+                                        <col style="width: 15%">
+                                        <col style="width: 30%">
+                                        <col style="width: 15%">
+                                        <col style="width: 15%">
+                                        <col style="width: 7%">
+                                        <col style="width: 7%">
+                                    </colgroup>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Codigo</th>
+                                        <th>Classe</th>
+                                        <th>Descrição</th>
+                                        <th>corrida</th>
+                                        <th>Volume</th>
+                                        <th>Peso</th>
+                                        <th>Remove</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-t="count">
+                                    <tr formArrayName="produtoCertificadoAux">
+                                        <td pEditableColumn [formGroupName]="i">
+                                            <p-cellEditor formGroupName="produto">
+                                                <ng-template pTemplate="input">
+                                                    <p-autoComplete
+                                                        formControlName="codigo"
+                                                        pKeyFilter="pnum"
+                                                        appendTo="body"
+                                                        field="codigo"
+                                                        [suggestions]="listCodigoProdutos"
+                                                        (completeMethod)="completeIdProduto($event)"
+                                                        (onSelect)="onSelectedProduto($event,i)"
+                                                    ></p-autoComplete>
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{rowData.value.produto.codigo}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td>
+                                            {{rowData.value.produto.classe}}
+                                        </td>
+                                        <td>
+                                            {{rowData.value.produto.descricao}}
+                                        </td>
+                                        <td pEditableColumn [formGroupName]="i">
+                                                <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input pInputText formControlName="corrida">
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{rowData.value.corrida}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td pEditableColumn [formGroupName]="i">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input pInputText formControlName="volume">
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{rowData.value.volume}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td pEditableColumn>
+                                            <p-cellEditor [formGroupName]="i">
+                                                <ng-template pTemplate="input">
+                                                    <input pInputText formControlName="peso" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',' }">
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{rowData.value.peso}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td style="text-align: center">
+                                            <button pTooltip="Excluir" pButton type="button" icon="fa fa-trash" (click)="removeRow(i)"></button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td colspan="1">
+                                            <p-button type="button" label="Adicionar" (click)="addRow()"></p-button>
+                                        </td>
+                                        <td colspan="6">
+                                            <p-button type="button" label="Clonar" (click)="copyRow()"></p-button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <button [disabled]="!certificadoForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                        style="margin-bottom:10px;width:auto" label="Salvar" class="ui-button-rounded"></button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+<p-contextMenu #cm [model]="items"></p-contextMenu>
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <p-table #dt1 [value]="certificados" [responsive]="true" [paginator]="true"
+        [(contextMenuSelection)]="selectCertificado" [contextMenu]="cm"
+        (onLazyLoad)="loadCertificados($event)" [totalRecords]="totalRecords" [rows]="25" [lazy]="true"
+        [rowsPerPageOptions]=[25,50,100,200] [scrollable]="true" scrollHeight="500px">
+            <ng-template pTemplate="caption">
+                Lista de Certificados Cadastrados
+            </ng-template>
+            <ng-template pTemplate="colgroup">
+                <colgroup>
+                    <col style="width: 8%">
+                    <col style="width: 12%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col *ngIf="shared.simplePermicion('ADMINISTRADOR')"  style="width: 5%">
+                    <col style="width: 5%">
+                    <col style="width: 5%">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>Codigo</th>
+                    <th [pSortableColumn]="'numero'" pResizableColumn>Numero
+                        <p-sortIcon [field]="'numero'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'fornecedor'" pResizableColumn>Fornecedor
+                        <p-sortIcon [field]="'fornecedor'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'norma'" pResizableColumn>Qualidade
+                        <p-sortIcon [field]="'norma'">
+                        </p-sortIcon>
+                    </th>
+                    <th>corrida</th>
+                    <th>Volume</th>
+                    <th>Peso</th>
+                    <th>Dimensão</th>
+                    <th [pSortableColumn]="'dataEmissao'" pResizableColumn>Data
+                        <p-sortIcon [field]="'dataEmissao'">
+                        </p-sortIcon>
+                    </th>
+                    <th *ngIf="shared.simplePermicion('ADMINISTRADOR')"  colspan="3" rowspan="2">Opções</th>
+                    <th *ngIf="!shared.simplePermicion('ADMINISTRADOR')" colspan="2" rowspan="2">Opções</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'codigo', 'contains')"
+                        [value]="dt1.filters['codigo']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'numero', 'contains')"
+                        [value]="dt1.filters['numero']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'fornecedor', 'contains')"
+                        [value]="dt1.filters['fornecedor']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'norma', 'contains')"
+                        [value]="dt1.filters['norma']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'corrida', 'contains')"
+                        [value]="dt1.filters['corrida']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'volume', 'contains')"
+                        [value]="dt1.filters['volume']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'peso', 'contains')"
+                        [value]="dt1.filters['peso']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'dimensao', 'contains')"
+                        [value]="dt1.filters['dimensao']?.value">
+                    </th>
+                    <th>
+                        <p-inputMask #maskDateInicio placeholder="Início" mask="99/99/9999" (onBlur)="dt1.filter(maskDateInicio.value, 'dateMin', 'gte')"></p-inputMask>
+                        <p-inputMask #maskDateFinal placeholder="Fim" mask="99/99/9999" (onBlur)="dt1.filter(maskDateFinal.value, 'dateMax', 'lte')"></p-inputMask>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-certificado let-i="index">
+                <tr [pContextMenuRow]="certificado">
+                    <td>
+                        <table>
+                            <tr *ngFor="let produto of certificado.produtos">
+                                <td>
+                                    {{produto.codigo}}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>{{certificado.numero}}</td>
+                    <td>{{certificado.fornecedor}}</td>
+                    <td>{{certificado.norma}}</td>
+                    <td>
+                        <table>
+                            <tr *ngFor="let produto of certificado.produtoCertificadoAux">
+                                <td>
+                                    {{produto.corrida}}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tr *ngFor="let produto of certificado.produtoCertificadoAux">
+                                <td>
+                                    {{produto.volume}}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tr *ngFor="let produto of certificado.produtoCertificadoAux">
+                                <td>
+                                    {{produto.peso}}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>{{certificado.dimensao}}</td>
+                    <td>{{certificado.dataEmissao}}</td>
+                    <td style="text-align: center " *ngIf="shared.simplePermicion('ADMINISTRADOR')">
+                        <p-button pTooltip="Alteração"  icon="fa fa-pencil" (click)="updateCertificado(certificado)" styleClass="ui-button-warning"></p-button>
+                    </td>
+                    <td style="text-align: center">
+                        <p-button pTooltip="Visualizar" icon="fa fa-eye" (click)="openCertificado(certificado)" styleClass="ui-button-primary"></p-button>
+                    </td>
+                    <td>
+                        <p-button pTooltip="Clientes" icon="fa fa-share" (click)="showListCliente(certificado)" styleClass="ui-button-primary"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+
+<p-dialog header="Cliente" [(visible)]="dialogCliente" [responsive]="true" (onHide)="cleanCliente()"
+showEffect="fade" [modal]="true"  [style]="{width: '350px', height: '300px'}">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="vin">Cliente</label>
+            </div>
+            <div class="ui-g-8">
+                <input pInputText required  [(ngModel)]="cliente.nome"/>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="vin">Nº Pedido</label>
+            </div>
+            <div class="ui-g-8">
+                <input pInputText required [(ngModel)]="cliente.numPedido"/>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="vin">Item</label>
+            </div>
+            <div class="ui-g-8">
+                <p-dropdown [options]="produtos" appendTo="body" required [(ngModel)]="cliente.produtoCertificadoAux">
+                    <ng-template let-produto pTemplate="item">
+                        <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                            <div style="font-size:14px;float:right;margin-top:4px">{{produto.value.produto.codigo}} - {{produto.value.corrida}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="year">Data</label>
+            </div>
+            <div class="ui-g-8">
+                <p-inputMask mask="99/99/9999" [(ngModel)]="cliente.data"></p-inputMask>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="submit" pButton icon="fa fa-check" (click)="salvarCliente()" label="Salvar"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-sidebar [(visible)]="sideBarCliente" styleClass="ui-sidebar-lg">
+    <p-table #dt3 [value]="listCliente" [scrollable]="true" scrollHeight="500px" >
+        <ng-template pTemplate="caption">
+            Lista de Clientes vinculado
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th [pSortableColumn]="'nome'" pResizableColumn>Nome
+                    <p-sortIcon [field]="'nome'">
+                    </p-sortIcon>
+                </th>
+                <th [pSortableColumn]="'numPedido'" pResizableColumn>Nº Pedido
+                    <p-sortIcon [field]="'nome'">
+                    </p-sortIcon>
+                </th>
+                <th [pSortableColumn]="'data'" pResizableColumn>Data
+                    <p-sortIcon [field]="'data'">
+                    </p-sortIcon>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <input pInputText type="text" (input)="dt3.filter($event.target.value, 'nome', 'contains')">
+                </th>
+                <th>
+                    <input pInputText type="text"  (input)="dt3.filter($event.target.value, 'numPedido', 'contains')">
+                </th>
+                <th>
+                    <p-inputMask #maskDateInicioDt3 placeholder="Início" mask="99/99/9999" (onBlur)="dt3.filter(maskDateInicioDt3.value, 'data', 'gte')"></p-inputMask>
+                    <p-inputMask #maskDateFinalDt3 placeholder="Fim" mask="99/99/9999" (onBlur)="dt3.filter(maskDateFinalDt3.value, 'data', 'lte')"></p-inputMask>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cliente let-i="index">
+            <tr>
+                <td>{{cliente.nome}}</td>
+                <td>{{cliente.numPedido}}</td>
+                <td>{{cliente.data}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td colspan="3">
+                    Total de {{listCliente?.length}}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="3">
+                    Certificado não vinculado
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-sidebar>
+
+
+
+

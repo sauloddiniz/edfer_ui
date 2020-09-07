@@ -1,0 +1,215 @@
+<form [formGroup]="orcamentoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro Orçamento</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <label>Data Orçamento</label>
+                        <p-calendar [showIcon]="true" formControlName="dataOrcamento" dateFormat="dd/mm/yy"></p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <p-table [value]="orcamentoForm.get('listaItemOrc').controls" [scrollable]="true" [style]="{width:'100%'}" [(contextMenuSelection)]="selectProdutoIndex" [contextMenu]="cmItem">
+                            <ng-template pTemplate="caption">
+                                Item / Servico
+                            </ng-template>
+                            <ng-template pTemplate="colgroup">
+                                <colgroup>
+                                    <col style="width:100px">
+                                    <col style="width:150px">
+                                    <col style="width:100px">
+                                    <col style="width:70px">
+                                </colgroup>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Item/Serviço</th>
+                                    <th>Descricao</th>
+                                    <th>Quantidade</th>
+                                    <th style="width: 10%">Opção</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                <tr formArrayName="listaItemOrc" [pContextMenuRow]="i">
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown appendTo="body" formControlName="tipoOrcamento" [options]="tipoOrcamento"
+                                                    [style]="{'width':'100%'}"></p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ rowData.value.tipoOrcamento | tipoService }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input #inputNameItem appendTo="body" formControlName="descricao"/>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ rowData.value.descricao }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input appendTo="body" formControlName="quantidade" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ rowData.value.quantidade }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <p-button type="button" icon="far fa-eye" (click)="itemIndex=i"></p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="footer">
+                                <tr>
+                                    <td colspan="4">
+                                        <p-button type="button" label="Adicionar" (click)="addItemOrcamento()"></p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <div formArrayName="listaItemOrc">
+                            <div [formGroupName]="itemIndex">
+                                <p-table [value]="orcamentoForm.get('listaItemOrc').at(itemIndex).get('fornecedores').controls"
+                                    [scrollable]="true" [style]="{width:'100%'}">
+                                    <ng-template pTemplate="caption">
+                                        Fornecedores
+                                    </ng-template>
+                                    <ng-template pTemplate="colgroup">
+                                        <colgroup>
+                                            <col style="width:150px">
+                                            <col style="width:150px">
+                                            <col style="width:120px">
+                                            <col style="width:150px">
+                                            <col style="width:50px">
+                                            <col style="width:80px">
+                                            <col style="width:80px">
+                                            <col style="width:70px">
+                                        </colgroup>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th rowspan="2">Fornecedor</th>
+                                            <th rowspan="2">Vendedor</th>
+                                            <th rowspan="2">Telefone</th>
+                                            <th rowspan="2">Avista</th>
+                                            <th colspan="3">Parcelado</th>
+                                            <th rowspan="2">Opção</th>
+                                        </tr>
+                                        <tr>
+                                            <th>X</th>
+                                            <th>Valor</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                        <tr formArrayName="fornecedores">
+                                            <td pEditableColumn [formGroupName]="i">
+                                                <p-cellEditor>
+                                                    <ng-template pTemplate="input">
+                                                        <input appendTo="body" formControlName="nome" />
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ rowData.value.nome }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td pEditableColumn [formGroupName]="i">
+                                                <p-cellEditor>
+                                                    <ng-template pTemplate="input">
+                                                        <input appendTo="body" formControlName="nomeVendedor" />
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ rowData.value.nomeVendedor }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td pEditableColumn [formGroupName]="i">
+                                                <p-cellEditor>
+                                                    <ng-template pTemplate="input">
+                                                        <input appendTo="body" formControlName="telefone" />
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ rowData.value.telefone }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td pEditableColumn [formGroupName]="i">
+                                                <p-cellEditor formGroupName="formaPagamento">
+                                                    <ng-template pTemplate="input" >
+                                                        <input appendTo="body" formControlName="valorAv"/>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ rowData.value.formaPagamento.valorAv }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td pEditableColumn [formGroupName]="i">
+                                                <p-cellEditor formGroupName="formaPagamento">
+                                                    <ng-template pTemplate="input" >
+                                                        <input appendTo="body" formControlName="quantParcela" />
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ rowData.value.formaPagamento.quantParcela }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td pEditableColumn [formGroupName]="i">
+                                                <p-cellEditor formGroupName="formaPagamento">
+                                                    <ng-template pTemplate="input" >
+                                                        <input appendTo="body" formControlName="valorParcela" />
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ rowData.value.formaPagamento.valorParcela }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td>
+                                                {{rowData.value.formaPagamento.valorParcela * rowData.value.formaPagamento.quantParcela}}
+                                            </td>
+                                            <td style="text-align: center">
+                                                <p-button type="button" icon="fa fa-trash" (click)="removerFornecedorItem(i)"></p-button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="footer">
+                                        <tr>
+                                            <td colspan="8">
+                                                <p-button type="button" (click)="addFornecedorItem()" label="Adicionar"></p-button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <p-button type="submit" label="Salvar"></p-button>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<p-contextMenu #cmItem [model]="items"></p-contextMenu>

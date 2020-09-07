@@ -1,0 +1,90 @@
+<p-toast></p-toast>
+
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <div class="card card-w-title">
+
+            <h1>Cadastro de Funcionario</h1>
+
+            <div class="ui-g" style="width:250px;margin-bottom:10px">
+                <p-radioButton #rd1 [(ngModel)]="selectedValue" (onClick)="change(rd1)" name="groupname" value="motorista" label="Motorista">Motorista</p-radioButton>
+                <p-radioButton #rd2 [(ngModel)]="selectedValue"  (onClick)="change(rd2)" name="groupname" value="ajudante" label="Ajudante">Ajudante</p-radioButton>
+            </div>
+                <form *ngIf="selectedValue === 'motorista'" [formGroup]="motoristaForm" (ngSubmit)="onSubmitMotorista()" autocomplete="off">
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Nome</label>
+                        <input type="text" formControlName="nome" pInputText placeholder="Nome">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="telefone">Telefone</label>
+                        <p-inputMask formControlName="telefone" mask="(99)99999-9999"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="cnhCategoria">CNH Categoria</label>
+                        <p-dropdown [options]="cnhCategoria" formControlName="enumCategoriaCnh" [style]="{'width':'100%'}"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="numberCnh">CNH Numero</label>
+                        <p-inputMask formControlName="numberCnh" mask="99999999999"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="dataVencimentoCnh">Data de vencimento CNH</label>
+                        <p-inputMask formControlName="dataVencimentoCnh" mask="99/99/9999"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-1 ui-md-1 ui-lg-1">
+                        <label for="ativo">Ativo</label>
+                        <p-inputSwitch formControlName="ativo"></p-inputSwitch>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <p-button type="submit" label="Salvar" class="ui-button-rounded"></p-button>
+                    </div>
+
+                </div>
+
+            </form>
+
+            <form *ngIf="selectedValue === 'ajudante'" [formGroup]="ajudanteForm" (ngSubmit)="onSubmitAjudante()" autocomplete="off">
+
+                    <div class="ui-g form-group">
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="Nome">Nome</label>
+                            <input  formControlName="nome" type="text" pInputText placeholder="Nome">
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="telefone">Telefone</label>
+                            <p-inputMask formControlName="telefone" mask="(99)99999-9999"></p-inputMask>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="cnhCategoria">CNH Categoria</label>
+                            <p-dropdown [options]="cnhCategoria" formControlName="enumCategoriaCnh" [style]="{'width':'100%'}"></p-dropdown>
+                        </div>
+
+                        <div class="ui-g-1 ui-md-1 ui-lg-1">
+                            <label for="ativo">Ativo</label>
+                            <p-inputSwitch formControlName="ativo" ></p-inputSwitch>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                            <p-button type="submit" label="Salvar" class="ui-button-rounded"></p-button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,138 @@
+<p-toast></p-toast>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+
+        <p-table #dt1 [value]="rows" [responsive]="true" [rows]="25"
+        [scrollable]="true" scrollHeight="500px">
+            <ng-template pTemplate="caption">
+                <div style="text-align: right">
+                    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                    <input type="text" pInputText size="50" placeholder="Nº Pedido" (blur)="searchCliente($event.target.value)" style="width:auto">
+                </div>
+            </ng-template>
+            <ng-template pTemplate="colgroup">
+                <colgroup>
+                    <col style="width: 10%">
+                    <col style="width: 30%">
+                    <col style="width: 20%">
+                    <col style="width: 30%">
+                    <col style="width: 7%">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>Item</th>
+                    <th>Certificado</th>
+                    <th>Corrida</th>
+                    <th>Produto</th>
+                    <th>Opção</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-index="index">
+                <tr>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="rowData.item">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{rowData.item}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="rowData.numCertificado">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{rowData.numCertificado}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="rowData.corrida">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{rowData.corrida}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText type="text" [(ngModel)]="rowData.produto">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{rowData.produto}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td style="text-align: center">
+                        <button pTooltip="Excluir" pButton type="button" icon="fa fa-trash" (click)="removeRow(rowData)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+               <tr>
+                   <td colspan="5">
+                       Não add
+                   </td>
+               </tr>
+            </ng-template>
+            <ng-template pTemplate="summary" let-rowData>
+                <div style="float: left;">
+                    <p-button [disabled]="!disabled" icon="fa fa-plus" (click)="addItem()" label="Add"></p-button>
+                </div>
+                <div style="text-align: right">
+                    <p-button [disabled]="!disabled" icon="fas fa-file-pdf" (click)="createPdf()" label="Criar"></p-button>
+                </div>
+            </ng-template>
+        </p-table>
+
+    </div>
+</div>
+
+<p-dialog header="Cliente" [(visible)]="dialog" [responsive]="true" (onHide)="clean()" showEffect="fade" [modal]="true"  [style]="{width: '300px'}">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="vin">Certificado</label>
+            </div>
+            <div class="ui-g-8">
+                <input pInputText [(ngModel)]="rowCreated.numCertificado"/>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="vin">Corrida</label>
+            </div>
+            <div class="ui-g-8">
+                <input pInputText [(ngModel)]="rowCreated.corrida"/>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-4">
+                <label for="vin">Produto</label>
+            </div>
+            <div class="ui-g-8">
+                <p-autoComplete appendTo="body" (onSelect)="onSelect($event)" [(ngModel)]="rowCreated.produto" [suggestions]="produtos" (completeMethod)="searchProduto($event)" [size]="30"
+                    forceSelection="true">
+                    <ng-template let-produto pTemplate="item">
+                        <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                            <div style="font-size:18px;float:right;margin:10px 10px 0 0">{{produto.codigo}} {{produto.classe}} {{produto.descricao}}</div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="submit" pButton icon="fa fa-check" (click)="incluir()" label="Salvar"></button>
+        </div>
+    </p-footer>
+</p-dialog>

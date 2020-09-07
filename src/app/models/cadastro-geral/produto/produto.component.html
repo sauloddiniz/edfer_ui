@@ -1,0 +1,93 @@
+<p-toast></p-toast>
+
+<form [formGroup]="produtoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro/Consulta de Produtos</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-2 ui-lg-2">
+                        <label for="nome">Codigo</label>
+                        <input type="text" pKeyFilter="pnum" pInputText formControlName="codigo" />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-10 ui-lg-10">
+                        <label for="nome">Descrição</label>
+                        <input type="text" pInputText formControlName="descricao" />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-2 ui-lg-2">
+                        <label> </label>
+                        <button [disabled]="!produtoForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                            label="Salvar" class="ui-button-raised ui-button-rounded">
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+
+        <p-table #dt1 [value]="produtos" [responsive]="true" [paginator]="true"
+        (onLazyLoad)="loadProdutos($event)" [totalRecords]="totalRecords" [rows]="50" [lazy]="true" [loading]="loading"
+        [rowsPerPageOptions]=[25,50,100,200]>
+            <ng-template pTemplate="caption">
+                Lista de Items Cadastrados
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th [pSortableColumn]="'codigo'" pResizableColumn>Codigo
+                        <p-sortIcon [field]="'codigo'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'descricao'" pResizableColumn>Descrição
+                        <p-sortIcon [field]="'descricao'">
+                        </p-sortIcon>
+                    </th>
+                    <th colspan="2" style="width: 13%">Opções</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'codigo', 'equals')"
+                            [value]="dt1.filters['codigo']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'descricao', 'contains')"
+                            [value]="dt1.filters['descricao']?.value">
+                    </th>
+                    <th colspan="2"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-produto let-i="index">
+                <tr>
+                    <td>{{produto.codigo}}</td>
+                    <td>{{produto.descricao}}</td>
+                    <td style="text-align: center ">
+                        <p-button pTooltip="Alteração" (click)="confirmChange(produto)" icon="fa fa-pencil" styleClass="ui-button-warning"></p-button>
+                    </td>
+                    <td style="text-align: center">
+                        <p-button pTooltip="Remover" (click)="confirmDelete(produto)" icon="fa fa-trash" styleClass="ui-button-danger"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </div>
+</div>
+
+<p-confirmDialog icon="pi pi-exclamation-triangle" #cd>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" class="ui-button-success" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>

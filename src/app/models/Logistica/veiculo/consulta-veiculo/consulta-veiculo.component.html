@@ -1,0 +1,134 @@
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+
+        <p-table [value]="veiculos" [scrollable]="true" scrollHeight="380px">
+            <ng-template pTemplate="caption">
+                Lista de veiculos
+            </ng-template>
+            <ng-template pTemplate="colgroup">
+                <colgroup>
+                    <col style="width: 14em">
+                    <col style="width: 6.5em">
+                    <col style="width: 7em">
+                    <col style="width: 8em">
+                    <col style="width: 14em">
+                    <col style="width: 10em">
+                    <col style="width: 10em">
+                    <col style="width: 5em">
+                    <col style="width: 6.5em">
+                    <col style="width: 5.1em">
+                    <col style="width: 4.1em">
+                    <col style="width: 4.1em">
+                    <col style="width: 4.1em">
+                    <col style="width: 4.1em">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th [pSortableColumn]="'modelo'" pResizableColumn>Modelo
+                        <p-sortIcon [field]="'modelo'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'placa'" pResizableColumn>Placa
+                        <p-sortIcon [field]="'placa'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'categoria'" pResizableColumn>Categoria
+                        <p-sortIcon [field]="'categoria'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'renavam'" pResizableColumn>Renavam
+                        <p-sortIcon [field]="'renavam'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'chassi'" pResizableColumn>Chassi
+                        <p-sortIcon [field]="'chassi'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'fabricante'" pResizableColumn>Fabricante
+                        <p-sortIcon [field]="'fabricante'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'dataCompra'" pResizableColumn>Data da Compra
+                        <p-sortIcon [field]="'dataCompra'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'pesoSuportado'" pResizableColumn>Peso
+                        <p-sortIcon [field]="'pesoSuportado'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'hodometro'" pResizableColumn>Hodômetro
+                        <p-sortIcon [field]="'hodometro'">
+                        </p-sortIcon>
+                    </th>
+                    <th style="width: 10%">Inativo</th>
+                    <th colspan="4">Opções</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-veiculo let-i="index">
+                <tr>
+                    <td>{{veiculo.modelo}}</td>
+                    <td>{{veiculo.placa}}</td>
+                    <td>{{veiculo.categoria.nome}}</td>
+                    <td>{{veiculo.renavam}}</td>
+                    <td>{{veiculo.chassi}}</td>
+                    <td>{{veiculo.fabricante.nome}}</td>
+                    <td>{{veiculo.dataCompra}}</td>
+                    <td>{{veiculo.pesoSuportado}}</td>
+                    <td>{{veiculo.hodometro}}</td>
+                    <td style="text-align: center">
+                        <button *ngIf="veiculo.ativo == true" pTooltip="Desativar" pButton type="button" icon="fa fa-check-empty"
+                            class="ui-button-secondary" (click)="alterarAtividade(veiculo.idVeiculo, false)"></button>
+                        <button *ngIf="veiculo.ativo == false" pTooltip="Ativar" pButton type="button" icon="fa fa-check"
+                            class="ui-button-secondary" (click)="alterarAtividade(veiculo.idVeiculo, true)"></button>
+                    </td>
+                    <td style="text-align: center ">
+                        <p-button pTooltip="Alteração" icon="fa fa-pencil" styleClass="ui-button-warning" (click)="atualizarVeiculo(veiculo)"></p-button>
+                    </td>
+                    <td style="text-align: center ">
+                        <p-button (click)="getManutencao(veiculo); displaySideBar = true" pTooltip="Lista de Manutencao"
+                            icon="fa fa-wrench" styleClass="ui-button-warning"></p-button>
+                    </td>
+                    <td style="text-align: center ">
+                        <p-button (click)="getAbastecimentos(veiculo); displaySideBar = true"
+                        pTooltip="Lista de Abastecimento" icon="fa fa-tint" styleClass="ui-button-warning"></p-button>
+                    </td>
+                    <td style="text-align: center ">
+                        <p-button (click)="getPneus(veiculo); displaySideBar = true"
+                        pTooltip="Lista de Pneus" icon="fa fa-cog" styleClass="ui-button-warning"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </div>
+</div>
+
+<p-sidebar [(visible)]="displaySideBar" [fullScreen]="true" [blockScroll]="true">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+
+            <p-table [columns]="cols" [value]="anyListValue" [scrollable]="true" scrollHeight="500px"
+                [virtualRowHeight]="60" [responsive]="true">
+                <ng-template pTemplate="caption">
+                    Lista de {{tituloLista}}
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns">
+                            {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+</p-sidebar>

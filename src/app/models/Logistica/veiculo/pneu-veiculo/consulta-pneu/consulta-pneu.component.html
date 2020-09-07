@@ -1,0 +1,416 @@
+<p-confirmDialog #cd>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<p-toast position="top-right"></p-toast>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <p-table #dt1 [value]="listPneus" [contextMenu]="cm" [(contextMenuSelection)]="selectedPneu" [responsive]="true"
+        [paginator]="true" [rows]="50" [lazy]="true" (onLazyLoad)="loadPneuLazy($event)"
+        [totalRecords]="totalRecords" [scrollable]="true" [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="380px">
+            <ng-template pTemplate="colgroup">
+                <colgroup>
+                    <col style="width:9em">
+                    <col style="width:5em">
+                    <col style="width:5em">
+                    <col style="width:6em">
+                    <col style="width:6em">
+                    <col style="width:6em">
+                    <col style="width:4em">
+                    <col style="width:5em">
+                    <col style="width:4.5em">
+                    <col style="width:4em">
+                    <col style="width:3em">
+                    <col style="width:3em">
+                    <col style="width:3em">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th [pSortableColumn]="'veiculo'" pResizableColumn>Veiculo
+                        <p-sortIcon [field]="'veiculo'">
+                        </p-sortIcon>
+                    </th>
+                    <th>Codigo Edfer</th>
+                    <th>KM</th>
+                    <th>Modelo</th>
+                    <th [pSortableColumn]="'dataCompra'" pResizableColumn>Data
+                        <p-sortIcon [field]="'dataCompra'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'marca'" pResizableColumn>Marca
+                        <p-sortIcon [field]="'marca'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'numSerie'" pResizableColumn>Nº Serie
+                        <p-sortIcon [field]="'numSerie'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'estado'" pResizableColumn>Estado Atual
+                        <p-sortIcon [field]="'estado'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'numNotaOuNumOrdem'" pResizableColumn>Nº Nota
+                        <p-sortIcon [field]="'numNotaOuNumOrdem'">
+                        </p-sortIcon>
+                    </th>
+                    <th>Estepe</th>
+                    <th colspan="3" rowspan="2">Açoes</th>
+                </tr>
+                <tr>
+                    <th>
+                        <p-multiSelect appendTo="body" [options]="listVeiculos" defaultLabel="Veiculos" (onChange)="dt1.filter($event.value, 'veiculos', 'in')"></p-multiSelect>
+                    </th>
+                    <th>
+                        <input pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'codControleEdfer', 'startingWith')">
+                    </th>
+                    <th>
+                        <input pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'kmMin', 'gt')">
+                        <input pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'kmMax', 'lt')">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'modelo', 'contains')">
+                    </th>
+                    <th>
+                        <p-inputMask #maskDateDe placeholder="Início" mask="99/99/9999" (onBlur)="dt1.filter(maskDateDe.value, 'compraPneuDateMin', 'contains')"></p-inputMask>
+                        <p-inputMask #maskDateAte placeholder="Fim" mask="99/99/9999" (onBlur)="dt1.filter(maskDateAte.value, 'compraPneuDateMax', 'contains')"></p-inputMask>
+                    </th>
+                    <th>
+                        <p-multiSelect appendTo="body" [options]="listFabricante" defaultLabel="Fabricantes" (onChange)="dt1.filter($event.value, 'fabricantePneu', 'in')"></p-multiSelect>
+                    </th>
+                    <th>
+                        <input pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'numSerie', 'startingWith')">
+                    </th>
+                    <th>
+                        <p-multiSelect appendTo="body" [options]="listEstado" [filter]="false" defaultLabel="estados" (onChange)="dt1.filter($event.value, 'estadoAtual', 'in')"></p-multiSelect>
+                    </th>
+                    <th>
+                        <input pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'numNotaOuNumOrdem', 'startingWith')">
+                    </th>
+                    <th>
+                        <p-dropdown appendTo="body" [options]="estepe" [style]="{'width':'100%'}" (onChange)="dt1.filter($event.value, 'estepe', 'equals')"></p-dropdown>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-pneu let-i="index">
+                <tr [pContextMenuRow]="pneu"
+                    [ngClass]="pneu.ativo == 'Inativo' ? 'pneu-inativo' : null">
+                    <td *ngIf="pneu.veiculo != null; else veiculoNull">
+                        {{pneu.veiculo.placa}}<br>
+                        <span *ngIf="!(pneu.numeroEixo === 0)">{{pneu.numeroEixo}} - </span>
+                        {{pneu.posicao}}
+                    </td>
+                    <ng-template #veiculoNull>
+                        <td>Nenhum</td>
+                    </ng-template>
+                    <td>{{pneu.codControleEdfer}}</td>
+                    <td>{{pneu.km}}</td>
+                    <td>{{pneu.modelo}}</td>
+                    <td>{{pneu.dataCompra}}</td>
+                    <td>{{pneu.fabricantePneu.nome}}</td>
+                    <td>{{pneu.numSerie}}</td>
+                    <td>{{pneu.estadoAtual}}</td>
+                    <td>{{pneu.numNotaOuNumOrdem}}</td>
+                    <td style="text-align: center">
+                        <i *ngIf="pneu.posicao == 'Estepe'" class="fa fa-check"></i>
+                        <i *ngIf="pneu.posicao != 'Estepe'" class="fa fa-check-empty"></i>
+                    </td>
+                    <td style="text-align: center">
+                        <p-button (onClick)="getHistorico(pneu); sideBarTableHistorico = true" pTooltip="Historicos" icon="fas fa-history"
+                            styleClass="ui-button-primary"></p-button>
+                    </td>
+                    <td style="text-align: center ">
+                        <p-button (onClick)="getEstados(pneu); sideBarTableEstado = true" pTooltip="Estados" icon="fas fa-h-square"
+                            styleClass="ui-button-primary"></p-button>
+                    </td>
+                    <td style="text-align: center ">
+                        <p-button pTooltip="Alterar" (onClick)="onChangePneu(pneu)" icon="fa fa-pencil"
+                        styleClass="ui-button-warning"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr>
+                    <td colspan="14"> Total: {{listPneus?.length}} </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <p-contextMenu #cm [model]="cms"></p-contextMenu>
+
+    </div>
+</div>
+
+<p-sidebar [(visible)]="sideBarTableHistorico" [fullScreen]="true" [showCloseIcon]="false">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+
+            <p-table [columns]="cols" [value]="historicoPneu" [scrollable]="true" scrollHeight="500px"
+                [virtualRowHeight]="60" [responsive]="true">
+                <ng-template pTemplate="caption">
+                    Historico do Pneu
+                </ng-template>
+                <ng-template pTemplate="colgroup">
+                    <colgroup>
+                        <col style="width:5em">
+                        <col style="width:8em">
+                        <col style="width:5em">
+                        <col style="width:15em">
+                        <col style="width:15em">
+                        <col style="width:5em">
+                        <col style="width:4em">
+                        <col style="width:3.5em">
+                        <col style="width:3.5em">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th>
+                            Data
+                        </th>
+                        <th>
+                            Veiculo
+                        </th>
+                        <th>
+                            Eixo
+                        </th>
+                        <th>
+                            Posição
+                        </th>
+                        <th>
+                            Servico
+                        </th>
+                        <th>
+                            KM
+                        </th>
+                        <th>
+                            Valor
+                        </th>
+                        <th colspan="2">Ações</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+                    <tr>
+                        <td>
+                            {{rowData.dataHistorico}}
+                        </td>
+                        <td >
+                            {{rowData.placa}}
+                        </td>
+                        <td *ngIf="rowData.numeroEixo != 0; else eixo0">
+                            {{rowData.numeroEixo}}
+                        </td>
+                        <ng-template #eixo0>
+                            <td></td>
+                        </ng-template>
+                        <td>
+                            {{rowData.posicao}}
+                        </td>
+                        <td>
+                            {{rowData.servico}}
+                        </td>
+                        <td>
+                            {{rowData.kmServico}}
+                        </td>
+                        <td>
+                            {{rowData.valorServico}}
+                        </td>
+                        <td class="acaoB">
+                            <p-button pTooltip="Alterar" (onClick)="onChangeHistorico(rowData)" icon="fa fa-pencil"
+                                styleClass="ui-button-warning"></p-button>
+                        </td>
+                        <td class="acaoB">
+                            <p-button pTooltip="Remover" (onClick)="onRemoveHistorico(rowData, i)" icon="fa fa-trash"
+                                styleClass="ui-button-danger"></p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="9">
+                            Nehum historico adicionado
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary" let-rowData>
+                    <div style="text-align:left">
+                        <p-button (onClick)="createHistorico()" icon="fa fa-plus"
+                            label="Criar">
+                        </p-button>
+                        <p-button (onClick)="onCleanHistorico(); sideBarTableHistorico = false" class="btnClose"
+                            icon="fa fa-close" label="Fechar" styleClass="ui-button-danger"></p-button>
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-sidebar>
+
+<p-dialog header="Formulário de Histórico" [(visible)]="dialogFormHistorico" [responsive]="true" showEffect="fade" [modal]="true"
+    [resizable]="true" [draggable]="false" [maximizable]="true">
+    <form [formGroup]="historicoPneuForm" (ngSubmit)="onSubmitHistorico()">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="data">Data</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-calendar id="data" formControlName="dataHistorico" [showIcon]="true" dataType="string"
+                        dateFormat="dd/mm/yy" [locale]="ptBr">
+                    </p-calendar>
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="servico">Servico</label>
+                </div>
+                <div class="ui-g-8">
+                    <input id="servico" formControlName="servico" type="text" pInputText />
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="kmServico">Km</label>
+                </div>
+                <div class="ui-g-8">
+                    <input id="kmServico" formControlName="kmServico" type="text" pInputText />
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="valor">Valor</label>
+                </div>
+                <div class="ui-g-8">
+                    <input id="valor" formControlName="valorServico" type="text" pInputText />
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button (click)="onSubmitHistorico()" type="button" pButton icon="fa fa-check" label="Salvar"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-sidebar [(visible)]="sideBarTableEstado" [fullScreen]="true" [showCloseIcon]="false">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+
+            <p-table [value]="estadosPneu">
+                <ng-template pTemplate="caption">
+                    Historico Estado
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th>Estado</th>
+                        <th>Data Compra/Reforma</th>
+                        <th>KM Final</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+                    <tr>
+                        <td>
+                            {{rowData.estado}}
+                        </td>
+                        <td>
+                            {{rowData.dataReforma}}
+                        </td>
+                        <td>
+                            {{rowData.kmFinal}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary" let-rowData>
+                    <div style="text-align:left">
+                        <p-button (onClick)="dialogFormEstado = true" icon="fa fa-plus" label="Criar"></p-button>
+                        <p-button (onClick)="sideBarTableEstado = false" class="btnClose" icon="fa fa-close" label="Fechar"  styleClass="ui-button-danger"></p-button>
+                    </div>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+</p-sidebar>
+<p-dialog header="Formulário do estado" [(visible)]="dialogFormEstado" [responsive]="true" showEffect="fade" [modal]="true"
+    [resizable]="true" [draggable]="false" [maximizable]="true">
+
+    <form [formGroup]="estadoPneuForm" (ngSubmit)="onSubmitEstado()">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="veiculo">Estado</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-dropdown formControlName="estado" placeholder="Selecione o estado" [options]="estados" [style]="{'width':'100%'}">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="data">Data</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-calendar id="data" appendTo="body" formControlName="dataReforma" dataType="string" [showIcon]="true" dateFormat="dd/mm/yy" [locale]="ptBr">
+                    </p-calendar>
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button (click)="onSubmitEstado()" type="button" pButton icon="fa fa-check" label="Salvar"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+
+<p-dialog header="Formulário de vinculo" [(visible)]="dialogFormUpdate" [responsive]="true"
+showEffect="fade" [modal]="true" [resizable]="true" [draggable]="false" [maximizable]="true">
+
+    <form [formGroup]="pneuVinculoForm" (ngSubmit)="onSubmitVinculo()">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12" formGroupName="veiculo">
+                <div class="ui-g-4">
+                    <label for="veiculo">Veículo</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-dropdown #veiculoSelect id="veiculo" placeholder="Selecione o veiculo" formControlName="idVeiculo" [options]="veiculos" [style]="{'width':'100%'}"
+                        filter="true" (onChange)="onChangeVeiculo(veiculoSelect.value)">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="posicao">Posição</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-dropdown id="posicao" appendTo="body" formControlName="posicao" placeholder="Posicão ocupada no eixo" [options]="posicoes" [style]="{'width':'100%'}">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="numeroEixo">Nº Eixo</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-dropdown [disabled]="pneuVinculoForm.get('posicao').value === 'Estepe'"  appendTo="body" id="numeroEixo" formControlName="numeroEixo" editable="true" [options]="eixos" [style]="{'width':'100%'}">
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button (click)="onSubmitVinculo()" type="button" pButton icon="fa fa-check" label="Salvar"></button>
+        </div>
+    </p-footer>
+</p-dialog>

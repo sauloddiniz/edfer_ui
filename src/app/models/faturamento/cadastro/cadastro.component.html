@@ -1,0 +1,32 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<form [formGroup]="entradaPedidoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro de Pedido</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Nº Pedido</label>
+                        <p-inputMask mask="999999?9999" unmask="true" placeholder="" formControlName="numeroPedido"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Nome Cliente</label>
+                        <input type="text" formControlName="cliente" pInputText />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <button [disabled]="!entradaPedidoForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                        style="margin-bottom:10px;width:auto" label="Salvar" class="ui-button-rounded"></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

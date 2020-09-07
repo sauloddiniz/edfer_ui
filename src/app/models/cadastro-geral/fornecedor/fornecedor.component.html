@@ -1,0 +1,73 @@
+<p-toast ></p-toast>
+
+<form [formGroup]="fornecedorForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro/Consulta Fornecedor</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <label for="nome">Nome</label>
+                        <input type="text" pInputText formControlName="nome" />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-2 ui-lg-2">
+                        <label> </label>
+                        <button
+                        [disabled]="!fornecedorForm.valid"
+                        pButton type="submit" icon="fa fa-save" iconPos="right" label="Salvar" class="ui-button-raised ui-button-rounded">
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+
+        <p-table [value]="fornecedores" [responsive]="true">
+            <ng-template pTemplate="caption">
+                Lista de Fornecedores Cadastrados
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>ID</th>
+                    <th [pSortableColumn]="'nome'" pResizableColumn>Nome
+                        <p-sortIcon [field]="'nome'">
+                        </p-sortIcon>
+                    </th>
+                    <th colspan="2" style="width: 13%">Opções</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-fornecedor let-i="index">
+                <tr>
+                    <td>{{fornecedor.idFornecedor}}</td>
+                    <td>{{fornecedor.nome}}</td>
+                    <td style="text-align: center ">
+                        <p-button pTooltip="Alteração" (click)="confirmChange(fornecedor)" icon="fa fa-pencil" styleClass="ui-button-warning"></p-button>
+                    </td>
+                    <td style="text-align: center">
+                        <p-button pTooltip="Remover" (click)="confirmDelete(fornecedor)" icon="fa fa-trash" styleClass="ui-button-danger"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </div>
+</div>
+
+<p-confirmDialog icon="pi pi-exclamation-triangle" #cd>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" class="ui-button-success" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>

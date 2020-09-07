@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+body .ui-table .ui-sortable-column.ui-state-highlight {
+    background-color: coral;
+    color: #FFFFFF;
+}
+
+body .ui-dropdown-panel .ui-dropdown-items .ui-dropdown-item.ui-state-highlight, body .ui-dropdown-panel .ui-dropdown-items .ui-dropdown-item-group.ui-state-highlight {
+    background-color: coral;
+    color: #FFFFFF;
+}
+
+body .ui-multiselect-panel .ui-multiselect-items .ui-multiselect-item.ui-state-highlight {
+    background-color: coral;
+    color: #FFFFFF;
+}
+
+body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-active {
+    background-color: coral;
+    color: #ffffff;
+}

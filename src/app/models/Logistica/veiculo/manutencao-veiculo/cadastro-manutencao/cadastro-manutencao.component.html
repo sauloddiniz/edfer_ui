@@ -1,0 +1,98 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<form [formGroup]="manutencaoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro de Manutenção</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="date">Data</label>
+                        <p-calendar dataType="string" [locale]="ptBr" formControlName="dataManutencao" dateFormat="dd/mm/yy"></p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6" formGroupName="veiculo">
+                        <label for="veiculo">Veículo</label>
+                        <p-dropdown id="veiculo" formControlName="idVeiculo" placeholder="Selecione o veículo" [options]="veiculos" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="fornecedor">Fornecedor</label>
+                        <p-autoComplete appendTo="body" formControlName="fornecedor" (completeMethod)="onClickSearchFornecedor($event)" [suggestions]="fornecedores"></p-autoComplete>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="tipoManutencao">Tipo de Manutenção</label>
+                        <p-dropdown formControlName="tipoManutencao" id="tipoManutencao" placeholder="Selecione o tipo de manutenção" [options]="tipoManutencao" [style]="{'width':'100%'}"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="servico">Servico</label>
+                        <p-multiSelect id="servico" formControlName="tipoServico" defaultLabel="Selecione o servico" [options]="tipoServicos" [style]="{'width':'100%'}" filter="true"></p-multiSelect>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="valor">Valor</label>
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon">R$</span>
+                            <input type="text" pInputText currencyMask formControlName="valorManutencao" placeholder="valor" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left', allowNegative: 'false'}">
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6 tp">
+                        <p-radioButton
+                            formControlName="tipoNota"
+                            name="selectTipoNota"
+                            label="Nota Fiscal"
+                            value="Nota fiscal">
+                        </p-radioButton>
+                        <p-radioButton
+                            formControlName="tipoNota"
+                            name="selectTipoNota"
+                            label="Nota de Ordem"
+                            value="Nota de ordem">
+                        </p-radioButton>
+                        <input formControlName="numNotaOuNumOrdem"
+                        type="text" pInputText placeholder="Numero">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                         <label for="hodometroEfetuado">Hodômetro</label>
+                         <input formControlName="hodometroEfetuado" type="text" pInputText placeholder="Km">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <label for="valor">Observação</label>
+                        <textarea formControlName="observacao" [rows]="2" [cols]="30" pInputTextarea autoResize="autoResize"></textarea>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="date"  style="color: firebrick">Validade Manutenção por data</label>
+                        <p-calendar showIcon="true" icon="fas fa-hourglass-start" dataType="string" [locale]="ptBr" formControlName="validadeManutencao" dateFormat="dd/mm/yy"></p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label for="validadeHodometro" style="color: firebrick" >Validade Manutenção por hodômetro</label>
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon"><i class="primary fas fa-hourglass-start"></i></span>
+                            <input formControlName="validadeHodometro" type="text" pInputText placeholder="Km">
+                        </div>
+                   </div>
+
+                   <div class="ui-g-12 ui-md-2 ui-lg-2">
+                    <button [disabled]="!manutencaoForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                        label="Salvar" class="ui-button-raised ui-button-rounded">
+                    </button>
+                </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,132 @@
+<p-confirmDialog #cd header="Confirmação" icon="pi pi-exclamation-triangle">
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<div class="ui-g ui-fluid">
+  <div class="ui-g-12">
+
+      <p-table #dt1 [value]="parteDiaria" [paginator]="true" [rows]="50" [lazy]="true" (onLazyLoad)="loadParteDiaria($event)"
+        [totalRecords]="totalRecords" [scrollable]="true" [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="400px">
+        <ng-template pTemplate="caption">
+            <div style="width: 100%">
+                <div  style="text-align: left; margin: 0px 0px 5px 0px">
+                    <p-multiSelect [options]="veiculos" [style]="{width: '300px'}" defaultLabel="Veiculos" (onChange)="dt1.filter($event.value, 'veiculos', 'in')"></p-multiSelect>
+                </div>
+                <div style="text-align: center; margin-top: -30px">
+                    Parte Diaria
+                </div>
+                <div style="text-align: right; margin-top: -30px; float: right">
+                    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                    <p-inputMask #maskDateDe placeholder="Início" mask="99/99/9999" [style]="{width: '150px'}" (onBlur)="dt1.filter(maskDateDe.value, 'dataParteDiariaMin', 'gt')"></p-inputMask>
+                    &nbsp;
+                    <p-inputMask #maskDateAte placeholder="Fim" mask="99/99/9999" [style]="{width: '150px'}" (onBlur)="dt1.filter(maskDateAte.value, 'dataParteDiariaMax', 'lt')"></p-inputMask>
+                </div>
+            </div>
+        </ng-template>
+          <ng-template pTemplate="colgroup">
+              <colgroup>
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 5em">
+                <col style="width: 4em">
+              </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th [pSortableColumn]="'veiculo'" pResizableColumn>Veículo
+                    <p-sortIcon [field]="'veiculo'">
+                    </p-sortIcon>
+                </th>
+                <th [pSortableColumn]="'dataParteDiaria'" pResizableColumn>Data
+                    <p-sortIcon [field]="'dataParteDiaria'">
+                    </p-sortIcon>
+                </th>
+                <th rowspan="2">Tipo Cli</th>
+                <th rowspan="2">C/D Edfer</th>
+                <th rowspan="2">Itinerario C/F</th>
+                <th rowspan="2">C/D Cli/For</th>
+                <th rowspan="2">Saída Cli/For</th>
+                <th rowspan="2"> Chegada Edfer</th>
+                <th rowspan="2">Hs Total Cli</th>
+                <th> Notas</th>
+              </tr>
+              <tr>
+                  <th colspan="2">
+                    <input type="text" pInputText placeholder="Cliente" (input)="dt1.filter($event.target.value, 'cliente', 'startingWith')" style="width:100%">
+                  </th>
+                  <th>
+                    <input type="text" pInputText placeholder="Nota" (input)="dt1.filter($event.target.value, 'nota', 'contains')" style="width:100%">
+                  </th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-rowIndex="index">
+                <tr class="ui-widget-header" style="background-color: #1CA979; color: #ffff">
+                    <td>
+                        <p-button icon="fa fa-edit" (click)="confirmChange(rowData.idParteDiaria)"></p-button>
+                    </td>
+                    <td colspan="9">
+                        <span style="font-weight:bold">Codigo: {{rowData.idParteDiaria}} - {{rowData.veiculo.modelo}} - {{rowData.veiculo.placa}} - Data: {{rowData.dataParteDiaria}} - Tempo Total: {{rowData.hsTotalParteDiaria | hourLog}} - Tempo Utilizado {{rowData.hsTotalValida | hourLog}} - Km Percorrida: {{rowData.kmRodado}}</span>
+                    </td>
+                </tr>
+                <tr *ngFor="let rotaDiaria of rowData.rotaDiaria; let i = index; let t = count" >
+                    <td colspan="2">
+                        {{rowData.rotaDiaria[i].nomeClienteOuFornecedor}}
+                    </td>
+                    <td>
+                        {{rowData.rotaDiaria[i].tipoClienteFornecedor}}
+                    </td>
+                    <td>
+                        {{rowData.rotaDiaria[i].hsInicioCargaDescargaEdfer}}<br>
+                        {{rowData.rotaDiaria[i].hsFinalCargaDescargaEdfer}}<br>
+                        <span style="font-weight:bold">{{rowData.rotaDiaria[i].hsTotalCargaDescgaEdfer | hourLog}}</span>
+                    </td>
+                    <td>
+                        {{rowData.rotaDiaria[i].hsSaidaParaClienteOuFornecedor}}<br>
+                        {{rowData.rotaDiaria[i].hsChegadaEmClienteOuFornecedor}}<br>
+                        <span style="font-weight:bold">{{rowData.rotaDiaria[i].hsTotalItinerarioClienteFornecedor | hourLog}}</span>
+                    </td>
+                    <td>
+                        {{rowData.rotaDiaria[i].hsInicioCargaDescargaClienteOuFornecedor}}<br>
+                        {{rowData.rotaDiaria[i].hsFinalCargaDescargaClienteOuFornecedor}}<br>
+                        <span style="font-weight: bold">{{rowData.rotaDiaria[i].hsTotalCargaDesClienteFornecedor | hourLog}}</span>
+                    </td>
+                    <td>
+                        {{rowData.rotaDiaria[i].hsSaidaDoClienteOuFornecedor}}<br>
+                    </td>
+                    <td>
+                        {{rowData.rotaDiaria[i].hsChegada}}<br>
+                    </td>
+                    <td>
+                        <span style="font-weight: bold">{{rowData.rotaDiaria[i].hsTotalDisposicaoCliente | hourLog}}</span>
+                    </td>
+                    <td>
+                        <table>
+                            <tr *ngFor="let notas of rotaDiaria.notas">
+                                {{notas}}
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr *ngIf="rowData.observacao !== null">
+                    <td colspan="10">
+                       Observação: {{rowData.observacao}}
+                    </td>
+                </tr>
+          </ng-template>
+        </p-table>
+
+        <p-sidebar [(visible)]="display" styleClass="ui-sidebar-md">
+
+        </p-sidebar>
+
+  </div>
+</div>

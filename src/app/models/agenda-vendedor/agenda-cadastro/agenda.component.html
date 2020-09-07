@@ -1,0 +1,171 @@
+<p-confirmDialog #cd header="Confirmação" icon="pi pi-exclamation-triangle">
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<p-toast></p-toast>
+
+<form [formGroup]="agendaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro na Agenda</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3" style="margin-bottom: 10px">
+                        <label for="Nome">Tipo Cliente</label>
+                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                            <p-radioButton formControlName="tipoCliente" name="tipoCliente" value="1" label="Juridico"></p-radioButton>
+
+                            <p-radioButton formControlName="tipoCliente" name="tipoCliente" value="0" label="Fisico"></p-radioButton>
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Cliente</label>
+                        <p-autoComplete appendTo="body" formControlName="cliente" emptyMessage="nenhum resultado" (completeMethod)="searchCliente($event)" [suggestions]="listaCliente"></p-autoComplete>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Contato</label>
+                        <p-autoComplete appendTo="body" formControlName="contato" emptyMessage="nenhum resultado" (completeMethod)="searchContato($event)" [suggestions]="listaContato"></p-autoComplete>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Telefone</label>
+                        <p-inputMask formControlName="telefone" [unmask]="true" mask="(99)99999999?9"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="orcamentoNumber">Orcamento Nº</label>
+                        <p-inputMask formControlName="orcamentoNumber" [unmask]="true" mask="99999?99999"></p-inputMask>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Valor</label>
+                        <input pInputText formControlName="valorOrcamento" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Data Visita/ligação</label>
+                        <p-calendar formControlName="dataVisita" dateFormat="dd/mm/yy" dataType="string" [locale]="ptBr" [showIcon]="true"></p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Data Retorno Visita/Ligação</label>
+                        <p-calendar formControlName="dataRetorno" dateFormat="dd/mm/yy" dataType="string" [locale]="ptBr" [showIcon]="true"
+                            [showTime]="true"></p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="Nome">Status</label>
+                        <p-dropdown [options]="status" formControlName="status" [style]="{'width':'100%'}" placeholder="Selecione o status"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <label for="observacao">Observações</label>
+                        <textarea [rows]="2" [cols]="30" formControlName="observacao" pInputTextarea autoResize="autoResize"></textarea>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <button [disabled]="!agendaForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                        style="margin-bottom:10px;width:auto" label="Salvar" class="ui-button-rounded"></button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <div class="card card-w-title">
+            <p-table
+            #dt1 [columns]="cols" [responsive]="true" [paginator]="true" [loading]="loading"
+                (onLazyLoad)="loadProdutos($event)" [totalRecords]="totalRecords" [rows]="50" [lazy]="true"
+                [scrollable]="true" scrollHeight="200px" [resizableColumns]="true"
+                [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="400px"
+                [value]="agenda" [loading]="loading" [scrollable]="true" [style]="{width:'100%'}">
+                        <ng-template pTemplate="caption">
+                            <div class="ui-helper-clearfix">
+                                <button type="button" class="ui-button-success btn" pButton icon="fas fa-sync-alt" pTooltip="Atualize a lista" tooltipPosition="left" (click)="updateList()"></button>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="colgroup">
+                            <colgroup>
+                                <col style="width:4.5em">
+                                <col style="width:5.5em">
+                                <col style="width:9em">
+                                <col style="width:9em">
+                                <col style="width:20em">
+                                <col style="width:9em">
+                                <col style="width:9em">
+                                <col style="width:10em">
+                                <col style="width:12em">
+                                <col style="width:12em">
+                                <col style="width:11em">
+                                <col style="width:85em">
+                            </colgroup>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th rowspan="2">Ação</th>
+                                <th *ngFor="let col of columns" [pSortableColumn]="col.field" [ngSwitch]="col.field" pResizableColumn>
+                                        {{col.header}}
+                                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+
+                                </th>
+                                <th rowspan="2"></th>
+                            </tr>
+                            <tr>
+                                <th *ngFor="let col of columns"[ngSwitch]="col.field">
+                                    <input *ngSwitchCase="'idAgenda'" pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'idAgenda', 'equals')">
+                                    <p-dropdown *ngSwitchCase="'tipoCliente'" appendTo="body" [options]="tipoCliente" [style]="{'width':'100%'}" (onChange)="dt1.filter($event.value, 'tipoCliente', 'equals')"></p-dropdown>
+                                    <p-multiSelect *ngSwitchCase="'estados'" appendTo="body" [options]="estados" defaultLabel="Estados" (onChange)="dt1.filter($event.value, 'estados', 'in')"></p-multiSelect>
+                                    <input *ngSwitchCase="'cliente'" pInputText type="text" (input)="dt1.filter($event.target.value, 'cliente', 'contains')">
+                                    <input *ngSwitchCase="'orcamentoNumber'" pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'orcamentoNumber', 'contains')">
+                                    <input *ngSwitchCase="'valorOrcamento'" pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'valorMin', 'equals')">
+                                    <input *ngSwitchCase="'valorOrcamento'" pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'valorMax', 'equals')">
+                                    <p-inputMask #maskDateDe *ngSwitchCase="'dtVisita'" placeholder="Início" mask="99/99/9999" (onBlur)="dt1.filter(maskDateDe.value, 'visitaDe', 'contains')"></p-inputMask>
+                                    <p-inputMask #maskDateAte *ngSwitchCase="'dtVisita'" placeholder="Fim" mask="99/99/9999" (onBlur)="dt1.filter(maskDateAte.value, 'visitaAte', 'contains')"></p-inputMask>
+                                    <p-inputMask #maskDateRetornoDe *ngSwitchCase="'dtRetorno'" placeholder="Início" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateRetornoDe.value, 'retornoDe', 'contains')"></p-inputMask>
+                                    <p-inputMask #maskDateRetornoAte *ngSwitchCase="'dtRetorno'" placeholder="Fim" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateRetornoAte.value, 'retornoAte', 'contains')"></p-inputMask>
+                                    <input *ngSwitchCase="'observacao'" pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'observacao', 'contains')">
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr>
+                                <td style="text-align: center">
+                                    <p-button type="button" icon="fa fa-pencil" (click)="atualizar(rowData)" pTooltip="Alteração"></p-button>
+                                </td>
+                                <td *ngFor="let col of columns" class="ui-resizable-column">
+                                    <div>
+                                        {{rowData[col.field] | tipoTelefone: col.field}}
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <th colspan="8">
+                                    Nenhum resultado encontrado
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer" let-rowData let-columns="columns">
+                            <tr>
+                                <td colspan="4">Total: {{agenda?.length}}</td>
+                                <td colspan="8">Valor Total R$ : {{valorTotal | tipoTelefone: 'valorOrcamento'}}</td>
+                            </tr>
+                        </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,106 @@
+<p-confirmDialog #cd header="Confirmação" icon="pi pi-exclamation-triangle">
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<p-toast></p-toast>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <div class="card card-w-title">
+
+            <p-table #dt1 [columns]="cols" [loading]="loading" [paginator]="true" [rows]="50" [lazy]="true" (onLazyLoad)="loadManutencaoLazy($event)"
+                [totalRecords]="totalRecords" [scrollable]="true" [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="380px"
+                [value]="manutencoes" dataKey="idManutencao" expandableRows="true" rowExpandMode="single">
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col style="width:3em">
+                    <col style="width:10em">
+                    <col style="width:10em">
+                    <col style="width:10em">
+                    <col style="width:10em">
+                    <col style="width:10em">
+                    <col style="width:10em">
+                    <col style="width:10em">
+                    <col style="width:10em">
+                    <col style="width:4.5em">
+                    <col style="width:4.5em">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th></th>
+                        <th *ngFor="let col of columns" [pSortableColumn]="col.field" [ngSwitch]="col.field" pResizableColumn>
+                                {{col.header}}
+                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                        </th>
+                        <th colspan="2" rowspan="2">Ações</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th *ngFor="let col of columns"[ngSwitch]="col.field">
+                                <p-multiSelect *ngSwitchCase="'veiculo'" appendTo="body" [options]="listVeiculos" defaultLabel="Veiculos" (onChange)="dt1.filter($event.value, 'veiculos', 'in')"></p-multiSelect>
+                                <p-inputMask #maskDateDe *ngSwitchCase="'dataManutencao'" placeholder="Início" mask="99/99/9999" (onBlur)="dt1.filter(maskDateDe.value, 'manutencaoDateMin', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateAte *ngSwitchCase="'dataManutencao'" placeholder="Fim" mask="99/99/9999" (onBlur)="dt1.filter(maskDateAte.value, 'manutencaoDateMax', 'contains')"></p-inputMask>
+                                <p-multiSelect *ngSwitchCase="'tipoManutencao'" appendTo="body" [options]="listTipoManutencao" defaultLabel="Tipo" (onChange)="dt1.filter($event.value, 'tipoManutencao', 'in')"></p-multiSelect>
+                                <p-multiSelect *ngSwitchCase="'tipoServico'" appendTo="body" [options]="listTipoServico" defaultLabel="Servico" (onChange)="dt1.filter($event.value, 'tipoServico', 'in')"></p-multiSelect>
+                                <p-multiSelect *ngSwitchCase="'tipoNota'" appendTo="body" [options]="listTipoNota" defaultLabel="Tipo Nota" (onChange)="dt1.filter($event.value, 'tipoNota', 'in')"></p-multiSelect>
+                                <input *ngSwitchCase="'valorManutencao'" pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'valorMin', 'gt')">
+                                <input *ngSwitchCase="'valorManutencao'" pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'valorMax', 'lt')">
+                            </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
+                        <tr>
+                            <td>
+                                <a href="#" [pRowToggler]="rowData">
+                                    <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                                </a>
+                            </td>
+                            <td>{{rowData.veiculo.placa}}</td>
+                            <td>{{rowData.dataManutencao}}</td>
+                            <td>{{rowData.tipoManutencao}}</td>
+                            <td>
+                                <table>
+                                    <tr *ngFor="let servico of rowData.tipoServico">
+                                        {{servico}}
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>{{rowData.numNotaOuNumOrdem}}</td>
+                            <td>{{rowData.valorManutencao | valorBr: 'valorBr'}}</td>
+                            <td>{{rowData.validadeHodometro}}</td>
+                            <td>{{rowData.validadeManutencao}}</td>
+                            <td>
+                                <button pButton type="button" class="ui-button-warning" (click)="onChangeManutencao(rowData)" pTooltip="Alteração" icon="fa fa-pencil"></button>
+                            </td>
+                            <td>
+                                <button pButton type="button" class="ui-button-danger" (click)="onRemoveManutencao(rowData)" pTooltip="Remover" icon="fa fa-trash"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+                        <tr>
+                            <td [attr.colspan]="columns.length + 1">
+                            {{rowData.observacao}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-rowData>
+                    <tr>
+                        <td colspan="11">Manutenção não encontrada</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="6"> Total: {{manutencoes?.length}} </td>
+                        <td colspan="6"> Total: R$ {{valorTotalManutencao | valorBr: 'valorBr'}} </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+</div>

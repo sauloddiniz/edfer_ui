@@ -1,0 +1,119 @@
+<p-toast></p-toast>
+
+<form  *ngIf="shared.simplePermicion('LOGISTICA')"  [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Item</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Codigo
+                            <span *ngIf="itemForm.controls['codigo'].hasError('field')"
+                            style="color: red;" [innerText]="itemForm.controls['codigo'].errors.message"></span>
+                        </label>
+                        <input type="text" pInputText formControlName="codigo" />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Descrição</label>
+                        <input type="text" pInputText formControlName="descricao" />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Unidade</label>
+                        <p-dropdown [options]="tipoUnidades" formControlName="tipoUnidade" (onChange)="onChange($event)"></p-dropdown>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Estoque</label>
+                        <input type="text" pInputText formControlName="estoque"
+                            pKeyFilter="pint"
+                            *ngIf="itemForm.controls['tipoUnidade'].value === 'UN'"/>
+                        <input type="text" pInputText formControlName="estoque"
+                            currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', align: 'left' }"
+                            *ngIf="itemForm.controls['tipoUnidade'].value !== 'UN'"/>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Estoque Minimo</label>
+                        <input type="text" pInputText formControlName="estoqueMinimo" />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <button pButton [disabled]="!itemForm.valid" type="submit" icon="fa fa-save" iconPos="right"
+                        style="margin-bottom:10px;width:auto" label="Salvar" class="ui-button-rounded"></button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <p-table #dt1 [value]="itens" [responsive]="true" [paginator]="true"
+        (onLazyLoad)="loadItens($event)" [totalRecords]="totalRecords" [rows]="25" [lazy]="true"
+        [rowsPerPageOptions]=[25,50,100,200] [scrollable]="true" scrollHeight="500px">
+            <ng-template pTemplate="caption">
+                Lista
+            </ng-template>
+            <ng-template pTemplate="colgroup">
+                <colgroup>
+                    <col style="width: 40%">
+                    <col style="width: 40%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                    <col *ngIf="shared.simplePermicion('LOGISTICA')" style="width: 10%">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th [pSortableColumn]="'codigo'" pResizableColumn>Codigo
+                        <p-sortIcon [field]="'codigo'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'descricao'" pResizableColumn>Descrição
+                        <p-sortIcon [field]="'descricao'">
+                        </p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'estoque'" pResizableColumn>Estoque
+                        <p-sortIcon [field]="'estoque'">
+                        </p-sortIcon>
+                    </th>
+                    <th *ngIf="shared.simplePermicion('LOGISTICA')" rowspan="2">Estoque Min</th>
+                    <th *ngIf="shared.simplePermicion('LOGISTICA')" rowspan="2">Opção</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'codigo', 'contains')"
+                        [value]="dt1.filters['codigo']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt1.filter($event.target.value, 'descricao', 'contains')"
+                        [value]="dt1.filters['descricao']?.value">
+                    </th>
+                    <th>
+                        <input pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'estoque', 'contains')"
+                        [value]="dt1.filters['estoque']?.value">
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-i="index">
+                <tr>
+                    <td>{{item.codigo}}</td>
+                    <td>{{item.descricao}}</td>
+                    <td [ngClass]="item.estoque <= item.estoqueMinimo ? 'estoqueMin' : null">{{item.estoque}}</td>
+                    <td *ngIf="shared.simplePermicion('LOGISTICA')">{{item.estoqueMinimo}}</td>
+                    <td *ngIf="shared.simplePermicion('LOGISTICA')" style="text-align: center ">
+                        <p-button pTooltip="Alteração"  icon="fa fa-pencil" (click)="onUpdate(item)" styleClass="ui-button-warning"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+<p-toast></p-toast>
+
+<form [formGroup]="pneuForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <div class="card card-w-title">
+
+                    <h1>Cadastro de Pneus</h1>
+
+                    <div class="ui-g form-group">
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="dataCompra">Data da Compra</label>
+                            <p-calendar dataType="string" formControlName="dataCompra" dateFormat="dd/mm/yy" [locale]="ptBr"></p-calendar>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="estadoAtual">Tipo Pneu</label>
+                            <p-dropdown formControlName="estadoAtual" placeholder="Selecione o estado" [options]="estados" [style]="{'width':'100%'}"></p-dropdown>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3" formGroupName="fabricantePneu">
+                            <label for="descricao">Marca</label>
+                            <p-dropdown formControlName="idFabricante" placeholder="Selecione o fabricante" [options]="fabricantesPneu" [filter]="true"
+                            [emptyFilterMessage]="'Resultado Não Encontrado'" [style]="{'width':'100%'}"></p-dropdown>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="modelo">Modelo</label>
+                            <input type="text" formControlName="modelo"  pInputText placeholder="Modelo">
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="km">Km</label>
+                            <input type="text" formControlName="km"  pInputText placeholder="Km">
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="codControleEdfer">Codigo Edfer</label>
+                            <input type="text" formControlName="codControleEdfer" pInputText placeholder="Codigo controle">
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="placa">Nº Serie</label>
+                            <input type="text" formControlName="numSerie" pInputText placeholder="Nº Serie">
+                        </div>
+
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <label for="placa">Nº Nota</label>
+                            <input type="text" formControlName="numNotaOuNumOrdem" pInputText placeholder="Nº Serie">
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                            <label> </label>
+                            <button [disabled]="!pneuForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                                label="Salvar" class="ui-button-raised ui-button-rounded" style="margin-bottom:10px;width:auto">
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </form>

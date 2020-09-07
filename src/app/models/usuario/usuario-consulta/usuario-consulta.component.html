@@ -1,0 +1,50 @@
+<p-confirmDialog #cd header="Confirmação" icon="pi pi-exclamation-triangle">
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <div class="card card-w-title">
+
+            <p-table [value]="usuarios">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Usuario</th>
+                        <th>E-mail</th>
+                        <th style="width: 10%">Ativo</th>
+                        <th>Perfil</th>
+                        <th style="width: 10%">Opção</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-usuario>
+                    <tr *ngFor="let perfil of usuario.perfis; let i = index; let t = count">
+                        <td [attr.rowspan]="t" *ngIf="i === 0">
+                            {{usuario.nome}}
+                        </td>
+                        <td [attr.rowspan]="t" *ngIf="i === 0">
+                            {{usuario.usuario}}
+                        </td>
+                        <td [attr.rowspan]="t" *ngIf="i === 0">
+                            {{usuario.email}}
+                        </td>
+                        <td [attr.rowspan]="t" *ngIf="i === 0">
+                            {{usuario.ativo}}
+                        </td>
+                        <td>
+                            {{usuario.perfis[i]}}
+                        </td>
+                        <td [attr.rowspan]="t" *ngIf="i === 0"
+                            style="text-align: center">
+                            <p-button pTooltip="Alterar" (click)="confirmChange(usuario)" icon="fa fa-pencil" styleClass="ui-button-primary"></p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+</div>

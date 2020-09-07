@@ -1,0 +1,370 @@
+<p-toast [hideTransitionOptions]="'500ms'"></p-toast>
+
+<form [formGroup]="diariaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro Diaria Veiculo</h1>
+
+                <div class="ui-g form-group">
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label>Data da Parte Diaria</label>
+                        <p-calendar formControlName="dataParteDiaria" dateFormat="dd/mm/yy" [showIcon]="true"
+                            dataType="string" [locale]="ptBr" hideOnDateTimeSelect="true">
+                        </p-calendar>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-3" formGroupName="veiculo">
+                        <label for="veiculo">Veículo</label>
+                        <p-dropdown id="veiculo" formControlName="idVeiculo"
+                        [options]="veiculos" [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-3" formGroupName="motorista">
+                            <label for="motorista">Motorista</label>
+                            <p-dropdown id="motorista" [options]="listMotoristas"
+                            formControlName="idFuncionario"
+                            [style]="{'width':'100%'}" filter="true"></p-dropdown>
+                        </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="motorista">Ajudantes</label>
+                        <p-multiSelect [options]="listAjudanes" maxSelectedLabels="2" defaultLabel="Ajudantes"
+                        formControlName="ajudantes"></p-multiSelect>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="hsInicioAlmoco">Hs Inicio Almoço</label>
+                        <p-inputMask formControlName="hsInicioAlmoco" mask="99:99"> </p-inputMask>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="hsFimAlmoco">Hs Fim Almoço</label>
+                        <p-inputMask formControlName="hsFimAlmoco" mask="99:99"> </p-inputMask>
+                    </div>
+
+                    <p-sidebar [(visible)]="display" styleClass="ui-sidebar-lg">
+                        <p-table [value]="diariaForm.get('gastos').controls">
+                            <ng-template pTemplate="colgroup">
+                                <colgroup>
+                                    <col style="width: 5em">
+                                    <col style="width: 4.5em">
+                                    <col style="width: 10em">
+                                    <col style="width: 3em">
+                                </colgroup>
+                            </ng-template>
+                            <ng-template pTemplate="caption">
+                                Gastos
+                            </ng-template>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Valor</th>
+                                    <th>Observação</th>
+                                    <th>Remover</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-gasto let-columns="columns" let-i="rowIndex">
+                                <tr formArrayName="gastos">
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown formControlName="tipoGasto" appendTo="body"
+                                                    [options]="listTipoGasto" [style]="{'width':'100%'}">
+                                                </p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{gasto.value.tipoGasto}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText formControlName="valor" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', align : 'left' }">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{gasto.value.valor | valorBr: 'valorBr'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                    <input pInputText formControlName="observacao">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{gasto.value.observacao}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td>
+                                        <div style="text-align:left">
+                                            <button class="ui-button-danger" pTooltip="Excluir" pButton type="button" icon="fa fa-trash" (click)="removeGasto(i)"></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                <div style="text-align:left">
+                                    <p-button class="ui-button-primary" type="button"
+                                    pTooltip="Adicionar"
+                                    icon="fas fa-plus"
+                                    (click)="addGasto()"></p-button>
+                                </div>
+                            </ng-template>
+                        </p-table>
+
+                    </p-sidebar>
+
+                    <div class="ui-g-12 ui-md-1 ui-lg-1">
+                        <label>Gastos Diaria</label>
+                        <p-button
+                            class="ui-button-primary" type="button"
+                            pTooltip="Incluir Gastos"
+                            icon="fas fa-hand-holding-usd"
+                            (click)="display = true">
+                        </p-button>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <p-table #table [responsive]="true" [value]="diariaForm.get('rotaDiaria').controls" [scrollable]="true"
+                            [style]="{width:'100%'}">
+                            <ng-template pTemplate="colgroup">
+                                <colgroup>
+                                    <col style="width: 10em"><!--CLIENTE / FORNECEDOR -->
+                                    <col style="width: 10em"><!--NOME -->
+                                    <col style="width: 8em"><!--Nº PEDIDOS -->
+                                    <col style="width: 5em"><!--TEMPO DE CARGA / INICIO -->
+                                    <col style="width: 5em"><!--TEMPO DE CARGA / FIM -->
+                                    <col style="width: 5em"><!--TEMPO DESLOCAMENTO / INICIO -->
+                                    <col style="width: 5em"><!--TEMPO DESLOCAMENTO / FIM -->
+                                    <col style="width: 5em"><!--TEMPO CARGA/DESCARGA / INICIO -->
+                                    <col style="width: 5em"><!--TEMPO CARGA/DESCARGA / FIM -->
+                                    <col style="width: 5em"><!--TEMPO DESLOCAMENTO / INICIO -->
+                                    <col style="width: 5em"><!--TEMPO DESLOCAMENTO / FIM -->
+                                    <col style="width: 5em"><!--QUILOMETRAGEM / INICIO -->
+                                    <col style="width: 5em"><!--QUILOMETRAGEM / FIM -->
+                                    <col style="width: 4.5em"><!--OPCAO -->
+                                </colgroup>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th colspan="3">INFORMAÇÔES</th>
+                                    <th colspan="2">TEMPO DE CARGA</th>
+                                    <th colspan="2">TEMPO DESLOCAMENTO</th>
+                                    <th colspan="2">TEMPO CARGA/DESCARGA</th>
+                                    <th colspan="2">TEMPO DESLOCAMENTO</th>
+                                    <th colspan="2">QUILOMETRAGEM</th>
+                                    <th rowspan="3">Ação</th>
+                                </tr>
+                                <tr>
+                                    <th rowspan="2">Cliente / Fornecedor</th>
+                                    <th rowspan="2">Nome</th>
+                                    <th rowspan="2" style="text-align: center">Nº Pedidos</th>
+                                    <th rowspan="2">Inicio</th>
+                                    <th rowspan="2">Fim</th>
+                                    <th rowspan="2">Inicio</th>
+                                    <th rowspan="2">Fim</th>
+                                    <th rowspan="2">Inicio</th>
+                                    <th rowspan="2">Fim</th>
+                                    <th rowspan="2">Inicio</th>
+                                    <th rowspan="2">Fim</th>
+                                    <th rowspan="2">KM Inicial.</th>
+                                    <th rowspan="2">KM Final</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-t="count">
+                                <tr formArrayName="rotaDiaria">
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown formControlName="tipoClienteFornecedor" appendTo="body"
+                                                    [options]="clienteOuFornecedor" [style]="{'width':'100%'}">
+                                                </p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.tipoClienteFornecedor | firstUpLeftOverDown}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-autoComplete appendTo="body"
+                                                    formControlName="nomeClienteOuFornecedor"
+                                                    emptyMessage="nenhum resultado"
+                                                    (completeMethod)="searchClienteOuFornecedor($event)"
+                                                    [suggestions]="listaClienteOuFornecedor"></p-autoComplete>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.nomeClienteOuFornecedor}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-chips formControlName="notas"
+                                                allowDuplicate="false" addOnTab="true">
+                                                </p-chips>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <p-chips formControlName="notas"></p-chips>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <!-- <td pEditableColumn [formGroupName]="i" style="text-align: center">
+                                        <p-chips formControlName="notas" allowDuplicate="false" addOnTab="true"></p-chips>
+                                    </td> -->
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsInicioCargaDescargaEdfer"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <span style="text-align: left;">{{rowData.value.hsInicioCargaDescargaEdfer}}</span>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsFinalCargaDescargaEdfer"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.hsFinalCargaDescargaEdfer}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsSaidaParaClienteOuFornecedor"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                <span style="text-align: left;">{{rowData.value.hsSaidaParaClienteOuFornecedor}}</span>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsChegadaEmClienteOuFornecedor"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.hsChegadaEmClienteOuFornecedor}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsInicioCargaDescargaClienteOuFornecedor"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.hsInicioCargaDescargaClienteOuFornecedor}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsFinalCargaDescargaClienteOuFornecedor"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.hsFinalCargaDescargaClienteOuFornecedor}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsSaidaDoClienteOuFornecedor"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.hsSaidaDoClienteOuFornecedor}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-inputMask
+                                                    formControlName="hsChegada"
+                                                    mask="99:99">
+                                                </p-inputMask>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.hsChegada}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input type="text" pInputText formControlName="kmInicial">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.kmInicial}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input type="text" pInputText formControlName="kmFinal">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.kmFinal}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <button class="ui-button-danger" pTooltip="Excluir" pButton type="button" icon="fa fa-trash" (click)="removeRow(i)"></button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="footer">
+                                <tr>
+                                    <td colspan="17">
+                                        <p-button type="button" label="Adicionar"  pTooltip="Incluir Rota" (click)="addRows()"></p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <label>Obervações</label>
+                        <textarea [rows]="2" [cols]="30" pInputTextarea formControlName="observacao"
+                            autoResize="autoResize"></textarea>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <button [disabled]="!diariaForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                            style="margin-bottom:10px;width:auto" label="Salvar" class="ui-button-rounded"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

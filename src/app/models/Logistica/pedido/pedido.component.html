@@ -1,0 +1,187 @@
+<p-messages></p-messages>
+<p-toast key="toast"></p-toast>
+
+<form [formGroup]="pedidoForm" autocomplete="off">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro de Pedidos <button pTooltip="Atualize a lista" tooltipPosition="left" pButton type="button" icon="fas fa-sync-alt" class="ui-button-success btn" (click)="updateList()"></button> </h1>
+
+                <p-table #dt1 [columns]="cols" [paginator]="true" dataKey="value.entradaPedido.numeroPedido"
+                (onLazyLoad)="loadProdutos($event)" [totalRecords]="totalRecords" [rows]="50" [lazy]="true"
+                [scrollable]="true" [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="380px"
+                [value]="pedidoForm.get('pedidos').controls">
+                    <ng-template pTemplate="colgroup">
+                        <colgroup>
+                            <col style="width:4em">
+                            <col style="width:3em">
+                            <col style="width:10em">
+                            <col style="width:10em">
+                            <col style="width:15em">
+                            <col style="width:5em">
+                            <col style="width:15em">
+                            <col style="width:15em">
+                            <col style="width:10em">
+                            <col style="width:12em">
+                            <col style="width:12em">
+                            <col style="width:10em">
+                            <col style="width:8em">
+                            <col style="width:4em">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th colspan="2" rowspan="2"></th>
+                            <th *ngFor="let col of columns" [pSortableColumn]="col.field" [ngSwitch]="col.field" pResizableColumn>
+                                    {{col.header}}
+                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                            </th>
+                            <th rowspan="2"></th>
+                        </tr>
+                        <tr>
+                            <th *ngFor="let col of columns"[ngSwitch]="col.field">
+                                <p-inputMask #maskDateCriacaoDe *ngSwitchCase="'createdDate'" placeholder="Inicio" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateCriacaoDe.value, 'dataCriacaoInicio', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateCriacaoAte *ngSwitchCase="'createdDate'" placeholder="Fim" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateCriacaoAte.value, 'dataCriacaoFinal', 'contains')"></p-inputMask>
+                                <input *ngSwitchCase="'numeroPedido'" pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'numeroPedido', 'contains')">
+                                <input *ngSwitchCase="'cliente'" pInputText type="text" (input)="dt1.filter($event.target.value, 'cliente', 'contains')">
+                                <input *ngSwitchCase="'pesoPedido'" pInputText type="text" (input)="dt1.filter($event.target.value, 'pesoInicio', 'equals')">
+                                <input *ngSwitchCase="'pesoPedido'" pInputText type="text" (input)="dt1.filter($event.target.value, 'pesoFinal', 'equals')">
+                                <input *ngSwitchCase="'rota'" pInputText type="text" (input)="dt1.filter($event.target.value, 'rota', 'contains')">
+                                <input *ngSwitchCase="'localizacao'" pInputText type="text" (input)="dt1.filter($event.target.value, 'localizacao', 'contains')">
+                                <p-inputMask #maskDateDe *ngSwitchCase="'dataPrevista'" placeholder="Inicio" mask="99/99/9999" (onBlur)="dt1.filter(maskDateDe.value, 'previsaoInicio', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateAte *ngSwitchCase="'dataPrevista'" placeholder="Fim" mask="99/99/9999" (onBlur)="dt1.filter(maskDateAte.value, 'previsaoFinal', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateRetornoDe *ngSwitchCase="'dtRetorno'" placeholder="Início" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateRetornoDe.value, 'retornoDe', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateRetornoAte *ngSwitchCase="'dtRetorno'" placeholder="Fim" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateRetornoAte.value, 'retornoAte', 'contains')"></p-inputMask>
+                                <p-multiSelect *ngSwitchCase="'localizacaoPedido'" appendTo="body" [options]="patios" selectedItemsLabel="{patios.length} itens selecionados" defaultLabel="Localização" (onChange)="dt1.filter($event.value, 'localizacaoPedido', 'in')"></p-multiSelect>
+                                <p-multiSelect *ngSwitchCase="'status'" appendTo="body" [options]="status" selectedItemsLabel="{status.length} itens selecionados" defaultLabel="Localização" (onChange)="dt1.filter($event.value, 'status', 'in')"></p-multiSelect>
+                                <p-multiSelect *ngSwitchCase="'situacaoFinal'" appendTo="body" [options]="situacaoFinal" selectedItemsLabel="{situacaoFinal.length} itens selecionados" defaultLabel="Situação" (onChange)="dt1.filter($event.value, 'situacaoFinal', 'in')"></p-multiSelect>
+                            </th>
+                        </tr>
+                    </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-expanded="expanded">
+                            <tr formArrayName="pedidos" [ngClass]="rowData.value.observacao !== null ? 'rowDate-color' : null">
+                                <td style="text-align: center">
+                                    <button *ngIf="rowData.value.checkOut === false" pTooltip="Desativar" pButton type="button" icon="fa fa-check-empty"
+                                        class="ui-button-secondary" (click)="rowData.value.checkOut = true"></button>
+                                    <button *ngIf="rowData.value.checkOut == true" pTooltip="Ativar" pButton type="button" icon="fa fa-check"
+                                        class="ui-button-secondary" (click)="rowData.value.checkOut = false" ></button>
+                                </td>
+                                <td style="text-align: left">
+                                    <a href="#/viagem" [pRowToggler]="rowData">
+                                        <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                                    </a>
+                                </td>
+                                <td>{{rowData.value.entradaPedido.createdDate}}</td>
+                                <td>{{rowData.value.entradaPedido.numeroPedido}}</td>
+                                <td>{{rowData.value.entradaPedido.cliente}}</td>
+                                <td pEditableColumn>
+                                    <p-cellEditor [formGroupName]="i">
+                                        <ng-template pTemplate="input">
+                                            <input type="text" pKeyFilter="pnum" formControlName="pesoPedido">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.value.pesoPedido}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor [formGroupName]="i">
+                                        <ng-template pTemplate="input">
+                                            <p-autoComplete appendTo="body" formControlName="rota" (completeMethod)="searchRotas($event)" [suggestions]="rotas"></p-autoComplete>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.value.rota}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor [formGroupName]="i">
+                                        <ng-template pTemplate="input">
+                                            <p-autoComplete appendTo="body" formControlName="localizacao" (completeMethod)="searchLocalizacao($event)" [suggestions]="localizacoes"></p-autoComplete>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.value.localizacao}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor [formGroupName]="i">
+                                        <ng-template pTemplate="input">
+                                            <p-calendar formControlName="dataPrevista" appendTo="body" dateFormat="dd/mm/yy" dataType="string" [locale]="ptBr" [showIcon]="true"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.value.dataPrevista}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                        <p-cellEditor [formGroupName]="i">
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown [options]="patios" appendTo="body" placeholder="Selecione" formControlName="localizacaoPedido"></p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.localizacaoPedido | pedido: 'patio'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn>
+                                        <p-cellEditor [formGroupName]="i">
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown [options]="status" appendTo="body" placeholder="Selecione" formControlName="status"></p-dropdown>
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.status | pedido: 'status' }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td pEditableColumn>
+                                    <p-cellEditor [formGroupName]="i">
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown [options]="situacaoFinal"  appendTo="body" placeholder="Selecione" formControlName="situacaoFinal"></p-dropdown>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.value.situacaoFinal | pedido: 'situacaoFinal'}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn>
+                                    <p-cellEditor [formGroupName]="i">
+                                        <ng-template pTemplate="input">
+                                            <p-calendar formControlName="dataEntrega" appendTo="body" dateFormat="dd/mm/yy" dataType="string" [locale]="ptBr" [showIcon]="true"></p-calendar>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.value.dataEntrega}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td style="text-align: center">
+                                    <button pButton type="button" icon="fa fa-save" class="ui-button-primary" (click)="salvarPedido(rowData.value)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="rowexpansion" let-rowData let-i="rowIndex" let-columns="columns">
+                            <tr formArrayName="pedidos" class="rowDate-color">
+                                <td colspan="14" pEditableColumn>
+                                    <p-cellEditor [formGroupName]="i">
+                                        <ng-template pTemplate="input">
+                                            <input formControlName="observacao">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{rowData.value.observacao}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="14">Pedido não encontrado</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+            </div>
+        </div>
+    </div>
+</form>

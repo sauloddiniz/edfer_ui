@@ -1,0 +1,149 @@
+<p-confirmDialog #cd2 key="delAgenda" header="Confirmação" icon="pi pi-exclamation-triangle">
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd2.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd2.reject()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<p-toast key="toast1" [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+                <p-table #dt1 [value]="agenda" [columns]="cols" [responsive]="true" [paginator]="true" [loading]="loading"
+                (onLazyLoad)="loadProdutos($event)" [totalRecords]="totalRecords" [rows]="50" [lazy]="true" [scrollable]="true"
+                [rowsPerPageOptions]=[25,50,100,200,500,1000] scrollHeight="280px">
+                    <ng-template pTemplate="caption">
+                        <div class="ui-helper-clearfix">
+                            <button type="button" pButton icon="fa fa-file-o" pTooltip="Extrair para Excel" tooltipPosition="bottom" iconPos="left" label="Extrair" (click)="dt1.exportCSV()" style="float:left"></button>
+                        </div>
+                    </ng-template>
+                     <ng-template pTemplate="colgroup">
+                        <colgroup>
+                            <col style="width:6em">
+                            <col style="width:10em">
+                            <col style="width:20em">
+                            <col style="width:10em">
+                            <col style="width:20em">
+                            <col style="width:10em">
+                            <col style="width:10em">
+                            <col style="width:10em">
+                            <col style="width:10em">
+                            <col style="width:10em">
+                            <col style="width:10em">
+                            <col style="width:100em">
+                            <col style="width:4.5em">
+                            <col style="width:4.5em">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns" [pSortableColumn]="col.field" [ngSwitch]="col.field" pResizableColumn>
+                                    {{col.header}}
+                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                            </th>
+                            <th rowspan="2" colspan="2">Ação</th>
+                            <th rowspan="2"></th>
+                        </tr>
+                        <tr>
+                            <th *ngFor="let col of columns"[ngSwitch]="col.field">
+                                <p-multiSelect *ngSwitchCase="'usuario'" appendTo="body" [options]="nomes" defaultLabel="Vendedores" (onChange)="dt1.filter($event.value, 'nome', 'in')"></p-multiSelect>
+                                <input *ngSwitchCase="'idAgenda'" pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'idAgenda', 'equals')">
+                                <p-dropdown *ngSwitchCase="'tipoCliente'" appendTo="body" [options]="tipoCliente" [style]="{'width':'100%'}" (onChange)="dt1.filter($event.value, 'tipoCliente', 'equals')"></p-dropdown>
+                                <p-multiSelect *ngSwitchCase="'estados'" appendTo="body" [options]="estados" defaultLabel="Estados" (onChange)="dt1.filter($event.value, 'estados', 'in')"></p-multiSelect>
+                                <input *ngSwitchCase="'cliente'" pInputText type="text" (input)="dt1.filter($event.target.value, 'cliente', 'contains')">
+                                <input *ngSwitchCase="'orcamentoNumber'" pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'orcamentoNumber', 'contains')">
+                                <input *ngSwitchCase="'valorOrcamento'" pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'valorMin', 'equals')">
+                                <input *ngSwitchCase="'valorOrcamento'" pKeyFilter="money" pInputText type="text" (input)="dt1.filter($event.target.value, 'valorMax', 'equals')">
+                                <p-inputMask #maskDateDe *ngSwitchCase="'dtVisita'" placeholder="Início" mask="99/99/9999" (onBlur)="dt1.filter(maskDateDe.value, 'visitaDe', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateAte *ngSwitchCase="'dtVisita'" placeholder="Fim" mask="99/99/9999" (onBlur)="dt1.filter(maskDateAte.value, 'visitaAte', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateRetornoDe *ngSwitchCase="'dtRetorno'" placeholder="Início" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateRetornoDe.value, 'retornoDe', 'contains')"></p-inputMask>
+                                <p-inputMask #maskDateRetornoAte *ngSwitchCase="'dtRetorno'" placeholder="Fim" mask="99/99/9999 00:00" (onBlur)="dt1.filter(maskDateRetornoAte.value, 'retornoAte', 'contains')"></p-inputMask>
+                                <input *ngSwitchCase="'observacao'" pInputText type="text" pKeyFilter="pnum" (input)="dt1.filter($event.target.value, 'observacao', 'contains')">
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+                        <tr>
+                            <td *ngFor="let col of columns" class="ui-resizable-column">
+                                <div>
+                                    {{rowData[col.field] | tipoTelefone: col.field}}
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <p-button type="button" icon="fas fa-eye" pTooltip="Historico" (click)="historicoView(rowData, rowData.genderDate); display = true"></p-button>
+                            </td>
+                            <td style="text-align: center">
+                                <button type="button" pButton (click)="confirDelete(rowData,i)" icon="fa fa-trash" class="ui-button-danger" pTooltip="Deletar"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <th colspan="9">
+                                Nenhum resultado encontrado
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer" let-rowData let-columns="columns">
+                        <tr>
+                            <td colspan="4">Total: {{ agenda?.length}}</td>
+                            <td colspan="10">Valor Total: {{ valorTotal | tipoTelefone: 'valorOrcamento'}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+                <p-sidebar [(visible)]="display" [fullScreen]="true" [baseZIndex]="10000" appendTo="body">
+
+                    <p-confirmDialog #cd key="delHistorico" header="Confirmação" icon="pi pi-exclamation-triangle">
+                        <p-footer>
+                            <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+                            <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+                        </p-footer>
+                    </p-confirmDialog>
+
+                    <p-table #tbGender [value]="genderDate" [scrollable]="true">
+                        <ng-template pTemplate="colgroup">
+                            <colgroup>
+                                <col style="width:10em">
+                                <col style="width:10em">
+                                <col style="width:10em">
+                                <col style="width:60em">
+                                <col style="width:6em">
+                            </colgroup>
+                        </ng-template>
+                        <ng-template pTemplate="caption">
+                            Histórico
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Data Visita/Ligação</th>
+                                <th>Data Retorno</th>
+                                <th>Estado</th>
+                                <th>Observação</th>
+                                <th>Ação</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                            <tr>
+                                <td>{{rowData.dataVisita}}</td>
+                                <td>{{rowData.dataRetorno}}</td>
+                                <td>{{rowData.status}}</td>
+                                <td>{{rowData.observacao}}</td>
+                                <td style="text-align: center">
+                                    <button type="button" pButton (click)="confirmDeleteHistorico(rowData,i)" icon="fa fa-trash" class="ui-button-danger" pTooltip="Deletar"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <tr>
+                                <td colspan="4" style="text-align: left">
+                                    <button pButton type="button" icon="pi pi-times" iconPos="right" (click)="display = false" label="Fechar" class="ui-button-primary"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-sidebar>
+            </div>
+        </div>
+    </div>

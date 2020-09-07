@@ -1,0 +1,176 @@
+<p-dialog header="Busca de Produto" [(visible)]="displayProduto" [modal]="true" [responsive]="true" [minY]="70"
+    [maximizable]="true" [baseZIndex]="10000">
+
+    <div class="ui-g ui-fluid">
+        <div class="card card-w-title">
+
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="codigo">Codigo</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-autoComplete
+                        [suggestions]="produtosTemp"
+                        [(ngModel)]="produto.codigo"
+                        (completeMethod)="searchProdutos($event)"
+                        (onSelect)="onSelectProduto($event)">
+                        <ng-template let-produto pTemplate="item">
+                            <div class="ui-helper-clearfix">
+                                <div style="font-size:18px;margin:10px 10px 0 0">{{produto.codigo}} -
+                                    {{produto.descricao}}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="descricao">Descrição</label>
+                </div>
+                <div class="ui-g-8">
+                    <p-autoComplete
+                        [suggestions]="produtosTemp"
+                        [(ngModel)]="produto.descricao"
+                        (completeMethod)="searchProdutosContais($event)"
+                        (onSelect)="onSelectProduto($event)">
+                        <ng-template let-produto pTemplate="item">
+                            <div class="ui-helper-clearfix">
+                                <div style="font-size:18px;margin:10px 10px 0 0">{{produto.descricao}} -
+                                    {{produto.codigo}}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </div>
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g-4">
+                    <label for="brand">Peso</label>
+                </div>
+                <div class="ui-g-8">
+                    <input pInputText id="brand" [(ngModel)]="produtoChegada.pesoProdutoChegada" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" (click)="insertProduto();displayProduto=false" label="Sim"></button>
+        <button type="button" pButton icon="pi pi-close" (click)="displayProduto=false" label="Não" class="ui-button-secondary"></button>
+    </p-footer>
+</p-dialog>
+
+<p-contextMenu #cm [model]="items"></p-contextMenu>
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<form [formGroup]="previsaoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Cadastro Previsão de Entrega</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label>Fornecedor</label>
+                        <p-autoComplete [suggestions]="fornecedores" [forceSelection]="true" emptyMessage="Nenhum Resultado Encontrado"
+                            (completeMethod)="searchFornecedor($event)" field="nome" formControlName="fornecedorProduto">
+                        </p-autoComplete>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <label>Data Prevista de Entrega</label>
+                        <p-calendar [showIcon]="true" formControlName="dataPrevisaoEntrega" dateFormat="dd/mm/yy">
+                        </p-calendar>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <p-table [value]="previsaoForm.get('produtosChegada').controls"
+                        [scrollable]="true" [style]="{width:'100%'}" [(contextMenuSelection)]="produtoChegadaSelect" [contextMenu]="cm" [responsive]="false">
+                            <ng-template pTemplate="colgroup">
+                                <colgroup>
+                                    <col style="width:75px">
+                                    <col style="width:75px">
+                                    <col style="width:200px">
+                                    <col style="width:75px">
+                                </colgroup>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Busca</th>
+                                    <th>Codigo</th>
+                                    <th>Descrição</th>
+                                    <th>Peso</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                <tr #dtRowData [pContextMenuRow]="rowData" formArrayName="produtosChegada">
+                                    <td style="text-align: center">
+                                        <button pTooltip="Buscar Produto" pButton type="button" icon="fa fa-search"
+                                            (click)="onSearch(rowData, i); displayProduto = true">
+                                        </button>
+                                    </td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor formGroupName="produto">
+                                            <ng-template pTemplate="input">
+                                                <input #inputCodigo pKeyFilter="pnum" pInputText type="text"
+                                                    formControlName="codigo"
+                                                    (keyup.tab)="addProduto($event, inputCodigo.value, i)"
+                                                    (keyup.backspace)="limpar(i)"
+                                                    (dblclick)="limpar(i)">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.produto.codigo}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td [formGroupName]="i" formGroupName="produto">{{rowData.value.produto.descricao}}</td>
+                                    <td pEditableColumn [formGroupName]="i">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input #inputPeso pKeyFilter="pnum"
+                                                    pInputText
+                                                    (keydown.tab)="addColummProduto(inputPeso.value)"
+                                                    type="text"
+                                                    formControlName="pesoProdutoChegada">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{rowData.value.pesoProdutoChegada}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="4">Nenhum Item Adicionar a Lista</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="footer">
+                                <tr>
+                                    <td colspan="4">
+                                        <p-button type="button" label="Adicionar" (click)="addColummProduto()"></p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <Label>Observação</Label>
+                        <textarea [rows]="2" [cols]="30" pInputTextarea formControlName="observacao" autoResize="autoResize"></textarea>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <p-button [disabled]="!previsaoForm.valid" type="submit" label="Salvar" class="ui-button-raised ui-button-rounded"
+                            icon="fa fa-save" iconPos="right"></p-button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>

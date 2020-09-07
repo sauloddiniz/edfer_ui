@@ -1,0 +1,124 @@
+<p-confirmDialog #cd>
+    <p-footer>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<form   [formGroup]="entradaSaidaMiudezaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <div class="card card-w-title">
+
+                <h1>Entrada / Saida</h1>
+
+                <div class="ui-g form-group">
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Tipo de servico</label>
+                        <div class="ui-g" style="width:250px;margin-bottom:10px">
+                            <div class="ui-g-12"> <p-radioButton name="group1" value="COMPRA" label="Compra" formControlName="entradaSaida"></p-radioButton></div>
+                            <div class="ui-g-12"> <p-radioButton name="group1" value="VENDA" label="Venda" formControlName="entradaSaida"></p-radioButton></div>
+                        </div>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Produto</label>
+                        <p-autoComplete appendTo="body" field="descricao" formControlName="miudeza" (onSelect)="onSelect($event)" [suggestions]="miudezas" (completeMethod)="searchMiudeza($event)" [size]="30"
+                            forceSelection="true">
+                            <ng-template let-miudeza pTemplate="item">
+                                <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                                    <div style="font-size:18px;float:right;margin:10px 10px 0 0">{{miudeza.codigo}} {{miudeza.descricao}}</div>
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Quantidade</label>
+                        <input type="text" pInputText formControlName="quantidade"
+                            currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', align: 'left' }"/>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-3">
+                        <label for="nome">Nº Pedido</label>
+                        <input type="text" formControlName="numPedido" pInputText />
+                    </div>
+
+                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                        <button [disabled]="!entradaSaidaMiudezaForm.valid" pButton type="submit" icon="fa fa-save" iconPos="right"
+                        style="margin-bottom:10px;width:auto" label="Salvar" class="ui-button-rounded"></button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+        <p-table #dt [value]="listEntradaSaida" [paginator]="true" [rows]="25">
+            <ng-template pTemplate="caption">
+                Ultimas Movimentações
+            </ng-template>
+            <ng-template pTemplate="colgroup">
+                <colgroup>
+                    <col style="width: 8%">
+                    <col style="width: 8%">
+                    <col style="width: 15%">
+                    <col style="width: 36%">
+                    <col style="width: 10%">
+                    <col style="width: 12%">
+                    <col style="width: 7%">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Nº Pedido</th>
+                    <th>Codigo</th>
+                    <th>Fluxo</th>
+                    <th>Descrição</th>
+                    <th rowspan="2">Quantidade</th>
+                    <th rowspan="2">Data</th>
+                    <th rowspan="2">Opção</th>
+                </tr>
+                <tr>
+                    <th>
+                        <input pInputText type="text" (input)="dt.filter($event.target.value, 'numPedido', 'startsWith')">
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt.filter($event.target.value, 'codigo', 'equals')">
+                    </th>
+                    <th>
+                        <p-multiSelect [options]="tipoEntrada" defaultLabel="Selecione" (onChange)="dt.filter($event.value, 'entradaSaida', 'in')"></p-multiSelect>
+                    </th>
+                    <th>
+                        <input pInputText type="text" (input)="dt.filter($event.target.value, 'miudeza.descricao', 'contains')">
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-produto>
+                <tr>
+                    <td>{{produto.numPedido}}</td>
+                    <td>{{produto.miudeza.codigo}}</td>
+                    <td>{{produto.entradaSaida}}</td>
+                    <td>{{produto.miudeza.descricao}}</td>
+                    <td>{{produto.quantidade}} - {{produto.miudeza.tipoUnidade}}</td>
+                    <td>{{produto.createdDate}}</td>
+                    <td style="text-align: center ">
+                        <p-button
+                            [disabled]="produto.entradaSaida === 'CANCELADO'"
+                            pTooltip="Cancelar"
+                            [tooltipDisabled]="produto.entradaSaida === 'CANCELADO'"
+                            icon="fa fa-ban"
+                            (click)="onCancel(produto)" styleClass="ui-button-danger"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<p-toast></p-toast>
