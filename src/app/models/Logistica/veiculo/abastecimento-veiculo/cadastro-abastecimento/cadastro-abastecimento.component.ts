@@ -115,7 +115,8 @@ export class CadastroAbastecimentoComponent implements OnInit {
             {label: 'Diesel', value: 'Diesel'},
             {label: 'Diesel S10', value: 'Diesel S10'},
             {label: 'Diesel Aditivado', value: 'Diesel Aditivado'},
-            {label: 'Diesel Premiun', value: 'Diesel Premiun'}
+            {label: 'Diesel Premiun', value: 'Diesel Premiun'},
+            {label: 'Arla 32', value: 'Arla 32'}
         ];
     }
 

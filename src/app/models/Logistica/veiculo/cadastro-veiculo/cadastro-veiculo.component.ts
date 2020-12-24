@@ -19,7 +19,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class CadastroVeiculoComponent implements OnInit {
     veiculoForm: FormGroup;
-
+    valueRadio = 1;
     categorias: any[] = [];
     tipoCombustivel: any[];
     fabricantes: any[] = [];
@@ -96,6 +96,8 @@ export class CadastroVeiculoComponent implements OnInit {
         }
         this.addCalenderPtBr();
     }
+
+
 
     private addVeiculo(id: number) {
         this.veiculoService.getVeiculoById(id).subscribe(
@@ -184,5 +186,9 @@ export class CadastroVeiculoComponent implements OnInit {
             clear: 'limpar',
             dateFormat: 'dd/mm/yy'
         };
+    }
+
+    changePlaca(valueRadio: number) {
+        this.valueRadio = valueRadio;
     }
 }

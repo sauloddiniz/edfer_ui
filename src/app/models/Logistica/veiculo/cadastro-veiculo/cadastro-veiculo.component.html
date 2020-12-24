@@ -14,9 +14,22 @@
                         <input type="text" formControlName="modelo" pInputText placeholder="modelo">
                     </div>
 
-                    <div class="ui-g-12 ui-md-6 ui-lg-3">
-                        <label for="placa">Placa</label>
-                        <p-inputMask formControlName="placa" mask="aaa-9999" characterPattern="[A-ZA-Z]"></p-inputMask>
+                    <div class="ui-g-12 ui-md-6 ui-lg-6 tp">
+                        <p-radioButton #radioPlaca1
+                            (onClick)="changePlaca(radioPlaca1.value)"
+                            name="tipoPlaca"
+                            label="Padrão"
+                            value="1">
+                        </p-radioButton>
+                        &nbsp;
+                        <p-radioButton #radioPlaca2
+                            (onClick)="changePlaca(radioPlaca2.value)"
+                            name="tipoPlaca"
+                            label="Mercosul"
+                            value="2">
+                        </p-radioButton>
+                        <p-inputMask [hidden]="valueRadio != 1" formControlName="placa" mask="aaa-9999" characterPattern="[a-zA-Z]"></p-inputMask>
+                        <p-inputMask [hidden]="valueRadio != 2" formControlName="placa" mask="aaa9a99" characterPattern="[a-zA-Z]"></p-inputMask>
                     </div>
 
                     <div class="ui-g-12 ui-md-6 ui-lg-3">

@@ -31,7 +31,12 @@ import { JwtModule, JwtHelperService } from '@auth0/angular-jwt';
 registerLocaleData(ptBr);
 
 export function getToken() {
-    return localStorage.getItem('access_token');
+    const helper  = new JwtHelperService();
+    if(helper.isTokenExpired(localStorage.getItem('access_token'))) {
+        localStorage.removeItem('access_token');
+    } else {
+        return localStorage.getItem('access_token');
+    }
    }
 
 @NgModule({
