@@ -11,7 +11,7 @@
                 <p-table #dt1 [columns]="cols" [paginator]="true" dataKey="value.entradaPedido.numeroPedido"
                 (onLazyLoad)="loadProdutos($event)" [totalRecords]="totalRecords" [rows]="50" [lazy]="true"
                 [scrollable]="true" [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="380px"
-                [value]="pedidoForm.get('pedidos').controls">
+                [value]="pedidoForm.controls['pedidos']">
                     <ng-template pTemplate="colgroup">
                         <colgroup>
                             <col style="width:4em">

@@ -17,6 +17,8 @@ import { CertificadoService } from './certificado.service';
 import { TooltipModule, SidebarModule, KeyFilterModule, DropdownModule, ToggleButtonModule, MultiSelectModule } from 'primeng/primeng';
 import { ToastModule } from 'primeng/toast';
 import { CurrencyMaskModule } from 'ng2-currency-mask';
+import { Formulario_entregaComponent } from './formulario_entrega/formulario_entrega.component';
+
 
 @NgModule({
   imports: [
@@ -41,7 +43,7 @@ import { CurrencyMaskModule } from 'ng2-currency-mask';
     ToggleButtonModule,
     MultiSelectModule
   ],
-  declarations: [CadastroComponent, Certificado_produtoComponent, ClienteComponent],
+  declarations: [CadastroComponent, Certificado_produtoComponent, ClienteComponent, Formulario_entregaComponent],
   providers: [CertificadoService]
 })
 export class CertificadoModule { }

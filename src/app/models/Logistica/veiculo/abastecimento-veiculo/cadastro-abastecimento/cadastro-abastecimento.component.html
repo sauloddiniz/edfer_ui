@@ -53,7 +53,7 @@
                         <div class="ui-inputgroup">
                             <span class="ui-inputgroup-addon">R$</span>
                             <input type="text" pInputText placeholder="valor litro"  formControlName="valorLitro"
-                            [value]="( ((valorTotal.value).substring('3').replace(',', '.')) / (inputQuantLitro.value).replace(',', '.')).toFixed('9')"
+                            [value]="( ((valorTotal.value).substring('3').replace(',', '.')) / (inputQuantLitro.value).replace(',', '.')).toFixed(9)"
                             currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left', allowNegative: 'false'}" >
                         </div>
                     </div>

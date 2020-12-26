@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="ui-g-12 ui-md-12 ui-lg-12">
-                        <p-table [value]="previsaoForm.get('produtosChegada').controls"
+                        <p-table [value]="previsaoForm.controls['produtosChegada']"
                         [scrollable]="true" [style]="{width:'100%'}" [(contextMenuSelection)]="produtoChegadaSelect" [contextMenu]="cm" [responsive]="false">
                             <ng-template pTemplate="colgroup">
                                 <colgroup>

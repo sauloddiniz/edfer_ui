@@ -7,7 +7,7 @@
 
                 <p-table #dt1 [paginator]="true" [rows]="50" [lazy]="true"
                 [scrollable]="true" [rowsPerPageOptions]=[50,100,200,500,1000] scrollHeight="380px"
-                [value]="formPedidoSeparacao.get('pedidoSeparacao').controls">
+                [value]="formPedidoSeparacao.controls['pedidoSeparacao']">
                 <ng-template pTemplate="colgroup">
                     <colgroup>
                         <col style="width:8em">

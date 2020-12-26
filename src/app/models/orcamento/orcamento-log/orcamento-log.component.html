@@ -14,7 +14,7 @@
                     </div>
 
                     <div class="ui-g-12 ui-md-12 ui-lg-12">
-                        <p-table [value]="orcamentoForm.get('listaItemOrc').controls" [scrollable]="true" [style]="{width:'100%'}" [(contextMenuSelection)]="selectProdutoIndex" [contextMenu]="cmItem">
+                        <p-table [value]="orcamentoForm.controls['listaItemOrc']" [scrollable]="true" [style]="{width:'100%'}" [(contextMenuSelection)]="selectProdutoIndex" [contextMenu]="cmItem">
                             <ng-template pTemplate="caption">
                                 Item / Servico
                             </ng-template>
@@ -85,7 +85,7 @@
                     <div class="ui-g-12 ui-md-12 ui-lg-12">
                         <div formArrayName="listaItemOrc">
                             <div [formGroupName]="itemIndex">
-                                <p-table [value]="orcamentoForm.get('listaItemOrc').at(itemIndex).get('fornecedores').controls"
+                                <p-table [value]="orcamentoForm.controls['listaItemOrc'][itemIndex].get('fornecedores').controls"
                                     [scrollable]="true" [style]="{width:'100%'}">
                                     <ng-template pTemplate="caption">
                                         Fornecedores

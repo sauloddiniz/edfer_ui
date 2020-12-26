@@ -31,12 +31,7 @@ import { JwtModule, JwtHelperService } from '@auth0/angular-jwt';
 registerLocaleData(ptBr);
 
 export function getToken() {
-    const helper  = new JwtHelperService();
-    if(helper.isTokenExpired(localStorage.getItem('access_token'))) {
-        localStorage.removeItem('access_token');
-    } else {
-        return localStorage.getItem('access_token');
-    }
+    return localStorage.getItem('access_token');
    }
 
 @NgModule({
@@ -47,7 +42,7 @@ export function getToken() {
         JwtModule.forRoot({
             config: {
                 tokenGetter: getToken,
-                whitelistedDomains: ['localhost:8080']
+                whitelistedDomains: ['192.168.1.119:8585']
               }
           }),
         ScrollPanelModule,

@@ -41,7 +41,7 @@
                     </div>
 
                     <p-sidebar [(visible)]="display" styleClass="ui-sidebar-lg">
-                        <p-table [value]="diariaForm.get('gastos').controls">
+                        <p-table [value]="diariaForm.controls['gastos']">
                             <ng-template pTemplate="colgroup">
                                 <colgroup>
                                     <col style="width: 5em">
@@ -125,7 +125,7 @@
                     </div>
 
                     <div class="ui-g-12 ui-md-12 ui-lg-12">
-                        <p-table #table [responsive]="true" [value]="diariaForm.get('rotaDiaria').controls" [scrollable]="true"
+                        <p-table #table [responsive]="true" [value]="diariaForm.controls['rotaDiaria']" [scrollable]="true"
                             [style]="{width:'100%'}">
                             <ng-template pTemplate="colgroup">
                                 <colgroup>
